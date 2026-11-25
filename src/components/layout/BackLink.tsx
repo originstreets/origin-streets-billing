@@ -23,9 +23,9 @@ export const BackLink: React.FC = () => {
     <button
       type="button"
       onClick={goBack}
-      className="group mb-3 -ml-1 inline-flex items-center gap-2 h-10 px-1 text-base font-bold text-os-ink hover:text-os-accent transition-colors no-print"
+      className="group mb-4 -ml-1 inline-flex items-center gap-1.5 h-9 pl-2 pr-3.5 rounded-full text-[0.9375rem] font-semibold text-os-muted hover:text-os-ink hover:bg-os-panel transition-colors no-print"
     >
-      <ArrowLeft size={22} className="text-os-accent transition-transform group-hover:-translate-x-0.5" />
+      <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-0.5" />
       <span>{t('Back')}</span>
     </button>
   );

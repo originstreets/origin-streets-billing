@@ -3,21 +3,26 @@ import { clsx } from 'clsx';
 import { Theme, setTheme, useTheme } from '../../theme';
 import { useT } from '../../i18n';
 
-// Two small squares, like the language switch: a black one (black & white
-// theme) and a red one (red & white theme). The one in use has a thick
-// frame and a white tick mark. Same height as the other top-bar buttons.
+// Two round swatches in a pill: black (black & white theme) and red (red &
+// white theme). The one in use sits in a filled circle. tone 'dark' is for
+// the black rail. The choice is remembered on this device.
 const OPTIONS: { value: Theme; swatch: string; label: string }[] = [
-  { value: 'mono', swatch: 'bg-[#0F0F0F]', label: 'Black & white' },
+  { value: 'mono', swatch: 'bg-black ring-1 ring-white/40', label: 'Black & white' },
   { value: 'red', swatch: 'bg-[#FF0000]', label: 'Red & white' },
 ];
 
-export const ThemeSwitch: React.FC<{ className?: string }> = ({ className }) => {
+export const ThemeSwitch: React.FC<{ className?: string; tone?: 'light' | 'dark' }> = ({ className, tone = 'light' }) => {
   const theme = useTheme();
   const t = useT();
+  const dark = tone === 'dark';
 
   return (
-    <div role="group" aria-label={t('Colour theme')} className={clsx('h-11 flex shrink-0 border border-os-line bg-os-paper', className)}>
-      {OPTIONS.map((o, i) => {
+    <div
+      role="group"
+      aria-label={t('Colour theme')}
+      className={clsx('h-11 p-1 flex shrink-0 gap-1 rounded-full', dark ? 'bg-white/10' : 'bg-os-panel', className)}
+    >
+      {OPTIONS.map((o) => {
         const on = theme === o.value;
         return (
           <button
@@ -28,20 +33,11 @@ export const ThemeSwitch: React.FC<{ className?: string }> = ({ className }) => 
             aria-label={t(o.label)}
             title={t(o.label)}
             className={clsx(
-              'h-full w-11 flex items-center justify-center transition-colors',
-              i > 0 && 'border-l border-os-line',
-              on ? 'bg-os-soft' : 'hover:bg-os-soft'
+              'h-9 w-9 rounded-full flex items-center justify-center transition-colors',
+              on ? (dark ? 'bg-white' : 'bg-os-paper shadow-subtle') : dark ? 'hover:bg-white/10' : 'hover:bg-os-soft'
             )}
           >
-            <span
-              className={clsx(
-                'w-6 h-6 flex items-center justify-center',
-                o.swatch,
-                on ? 'ring-2 ring-offset-2 ring-os-ink' : 'opacity-70'
-              )}
-            >
-              {on && <span className="w-2 h-2 bg-white" />}
-            </span>
+            <span className={clsx('w-5 h-5 rounded-full', o.swatch, !on && 'opacity-70')} />
           </button>
         );
       })}

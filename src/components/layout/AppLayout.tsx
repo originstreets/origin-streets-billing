@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
@@ -10,6 +10,7 @@ import { MadeBy } from '../common/MadeBy';
 
 export const AppLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
   const [searchOpen, setSearchOpen] = useState(false);
   const [newModalOpen, setNewModalOpen] = useState(false);
 
@@ -36,24 +37,24 @@ export const AppLayout: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-os-page flex flex-col font-sans antialiased text-os-ink">
-      {/* Sidebar Navigation */}
+    <div className="min-h-screen bg-os-page font-sans antialiased text-os-ink">
+      {/* The black rail: always beside the page on a computer, a drawer on a phone */}
       <Sidebar
         isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+        onClose={closeSidebar}
         onOpenSearch={() => setSearchOpen(true)}
         onOpenNew={() => setNewModalOpen(true)}
       />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* The page, to the right of the rail; content reads from the left edge */}
+      <div className="lg:pl-[17rem] min-h-screen flex flex-col min-w-0">
         <TopBar
           onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
           onOpenSearch={() => setSearchOpen(true)}
           onOpenNew={() => setNewModalOpen(true)}
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 w-full max-w-[88rem] px-4 py-5 sm:px-6 sm:py-7 lg:px-10 lg:py-9">
           <BackLink />
           <Outlet />
         </main>

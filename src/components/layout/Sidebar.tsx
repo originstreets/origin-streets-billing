@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -23,6 +23,7 @@ import { roleWord } from '../../utils/roleWord';
 import { useScrollLock } from '../../utils/useScrollLock';
 import { BrandLogo } from '../common/BrandLogo';
 import { ThemeSwitch } from '../common/ThemeSwitch';
+import { LanguageSwitch } from '../common/LanguageSwitch';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -31,26 +32,51 @@ interface SidebarProps {
   onOpenNew: () => void;
 }
 
+const DESKTOP = '(min-width: 1024px)';
+
+function useIsDesktop(): boolean {
+  const [desktop, setDesktop] = useState(() => window.matchMedia(DESKTOP).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(DESKTOP);
+    const onChange = () => setDesktop(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return desktop;
+}
+
+// Origin's black rail: always on screen beside the page on a computer, a
+// drawer from the left on a phone. The wordmark, New bill and Search on top,
+// every screen in the middle, the person, theme, language and sign out below.
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch }) => {
   const location = useLocation();
   const { currentStaff } = useStore();
   const t = useT();
-  // The page behind stays still while the menu is open.
-  useScrollLock(isOpen);
+  const desktop = useIsDesktop();
+  const shown = desktop || isOpen;
+  // The page behind stays still while the drawer is open on a phone.
+  useScrollLock(isOpen && !desktop);
+
+  useEffect(() => {
+    if (!isOpen || desktop) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, desktop, onClose]);
 
   const allNavItems: Array<{ label: string; path: string; icon: React.ReactNode; permission: PermissionKey }> = [
-    { label: t('Home'), path: '/dashboard', icon: <LayoutDashboard size={20} />, permission: 'DASHBOARD' },
-    { label: t('All bills'), path: '/bills', icon: <Receipt size={20} />, permission: 'BILLS' },
-    { label: t('Products & stock'), path: '/products', icon: <Shirt size={20} />, permission: 'PRODUCTS' },
-    { label: t('Customers'), path: '/customers', icon: <Users size={20} />, permission: 'CUSTOMERS' },
-    { label: t('Price tags'), path: '/tags', icon: <Tag size={20} />, permission: 'TAGS' },
-    { label: t('Check sales'), path: '/audit', icon: <FileCheck size={20} />, permission: 'AUDIT' },
-    { label: t('Monthly GST report'), path: '/monthly-bills', icon: <CalendarRange size={20} />, permission: 'MONTHLY_BILLS' },
-    { label: t('Settings & staff'), path: '/settings', icon: <Settings size={20} />, permission: 'SETTINGS' },
+    { label: t('Home'), path: '/dashboard', icon: <LayoutDashboard size={19} />, permission: 'DASHBOARD' },
+    { label: t('All bills'), path: '/bills', icon: <Receipt size={19} />, permission: 'BILLS' },
+    { label: t('Products & stock'), path: '/products', icon: <Shirt size={19} />, permission: 'PRODUCTS' },
+    { label: t('Customers'), path: '/customers', icon: <Users size={19} />, permission: 'CUSTOMERS' },
+    { label: t('Price tags'), path: '/tags', icon: <Tag size={19} />, permission: 'TAGS' },
+    { label: t('Check sales'), path: '/audit', icon: <FileCheck size={19} />, permission: 'AUDIT' },
+    { label: t('Monthly GST report'), path: '/monthly-bills', icon: <CalendarRange size={19} />, permission: 'MONTHLY_BILLS' },
+    { label: t('Settings & staff'), path: '/settings', icon: <Settings size={19} />, permission: 'SETTINGS' },
   ];
 
   // Nothing loaded yet (still fetching currentStaff) -> show everything rather
-  // than flashing an empty sidebar; once currentStaff arrives, filter for real.
+  // than flashing an empty rail; once currentStaff arrives, filter for real.
   const can = (p: PermissionKey) => !currentStaff || currentStaff.permissions.includes(p);
   const navItems = allNavItems.filter((item) => can(item.permission));
 
@@ -59,89 +85,95 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
     (path !== '/dashboard' && location.pathname.startsWith(path)) ||
     (path === '/bills' && (location.pathname.startsWith('/invoices') || location.pathname.startsWith('/orders')));
 
+  const closeOnPhone = () => {
+    if (!desktop) onClose();
+  };
+
   return (
     <>
-      {isOpen && <div className="fixed inset-0 bg-os-ink/40 z-40" onClick={onClose} />}
+      {isOpen && !desktop && <div className="fixed inset-0 bg-os-ink/60 z-40" onClick={onClose} />}
 
       <aside
-        aria-hidden={!isOpen}
-        className={`fixed top-0 bottom-0 left-0 z-50 w-80 max-w-[88vw] bg-os-accent text-white flex flex-col transition-transform duration-200 shadow-modal ${
-          isOpen ? 'translate-x-0' : '-translate-x-full invisible'
+        aria-hidden={!shown}
+        className={`os-rail fixed top-0 bottom-0 left-0 z-50 lg:z-30 w-[17rem] max-w-[86vw] bg-os-ink text-white flex flex-col transition-transform duration-200 ${
+          shown ? 'translate-x-0' : '-translate-x-full invisible'
         } no-print select-none`}
       >
-        <div className="px-5 h-16 border-b border-white/20 flex items-center justify-between">
-          <div className="flex items-end gap-2">
-            <BrandLogo height={24} tone="white" />
-            <span className="text-sm font-bold text-white/80 leading-none">{t('Billing')}</span>
-          </div>
-          <button
-            onClick={onClose}
-            className="h-10 w-10 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10"
-            aria-label={t('Close menu')}
-          >
-            <X size={22} />
-          </button>
+        <div className="px-6 pt-7 pb-6 flex items-start justify-between gap-3">
+          <NavLink to="/dashboard" onClick={closeOnPhone} className="block rounded-sm" aria-label={t('Home')}>
+            <BrandLogo height={28} tone="white" />
+            <span className="block mt-2 text-[0.8125rem] font-semibold text-white/55">{t('Billing')}</span>
+          </NavLink>
+          {!desktop && (
+            <button
+              onClick={onClose}
+              className="h-10 w-10 -mr-2 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10"
+              aria-label={t('Close menu')}
+            >
+              <X size={22} />
+            </button>
+          )}
         </div>
 
-        <div className="p-4 border-b border-white/20 space-y-2">
+        <div className="px-4 pb-4 space-y-2">
           {can('BILLING') && (
             <NavLink
               to="/billing/new"
-              onClick={onClose}
-              className="w-full h-14 bg-white text-os-accent px-4 flex items-center gap-3 text-lg font-bold hover:bg-os-page transition-colors"
+              onClick={closeOnPhone}
+              className="w-full h-12 rounded-full bg-os-highlight text-os-on-highlight px-5 flex items-center gap-2.5 text-base font-semibold hover:opacity-90 transition-opacity"
             >
-              <PlusCircle size={22} />
+              <PlusCircle size={20} />
               <span>{t('New bill')}</span>
             </NavLink>
           )}
-
           <button
             onClick={() => {
-              onClose();
+              closeOnPhone();
               onOpenSearch();
             }}
-            className="w-full h-11 bg-transparent border border-white/40 text-white px-3 flex items-center gap-2 text-base hover:border-white hover:bg-white/10 transition-colors"
+            className="w-full h-11 rounded-full ring-1 ring-inset ring-white/20 text-white/75 px-5 flex items-center gap-2.5 text-[0.9375rem] hover:ring-white/50 hover:text-white transition-colors"
           >
             <Search size={18} />
-            <span>{t('Search')}</span>
+            <span className="flex-1 text-left">{t('Search')}</span>
+            {desktop && <kbd className="text-xs font-sans text-white/45">Ctrl K</kbd>}
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1" aria-label={t('Menu')}>
+        <nav className="flex-1 overflow-y-auto px-4 py-2 space-y-0.5" aria-label={t('Menu')}>
           {navItems.map((item) => {
             const active = isActive(item.path);
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
-                onClick={onClose}
-                className={`flex items-center gap-3 px-3 h-12 text-base transition-colors ${
-                  active ? 'bg-white text-os-accent font-bold' : 'text-white hover:bg-white/10'
+                onClick={closeOnPhone}
+                aria-current={active ? 'page' : undefined}
+                className={`flex items-center gap-3 px-4 h-11 rounded-full text-[0.9375rem] transition-colors ${
+                  active ? 'bg-os-highlight text-os-on-highlight font-semibold' : 'text-white/70 hover:text-white hover:bg-white/10'
                 }`}
               >
-                <span className={active ? 'text-os-accent' : 'text-white/80'}>{item.icon}</span>
-                <span>{item.label}</span>
+                {item.icon}
+                <span className="truncate">{item.label}</span>
               </NavLink>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-white/20 space-y-2">
-          {/* On phones the top bar has no room for it, so the theme switch lives here too. */}
-          <div className="md:hidden flex items-center justify-between gap-2 text-sm text-white/80">
-            <span>{t('Colour theme')}</span>
-            <ThemeSwitch />
-          </div>
+        <div className="px-6 py-5 border-t border-white/10 space-y-4">
           {currentStaff && (
-            <div className="text-sm">
-              <div className="font-bold text-white truncate">{currentStaff.name}</div>
-              <div className="text-white/75">{t(roleWord(currentStaff.role))}</div>
+            <div className="text-sm leading-tight">
+              <div className="font-semibold text-white truncate">{currentStaff.name}</div>
+              <div className="text-white/55 mt-0.5">{t(roleWord(currentStaff.role))}</div>
             </div>
           )}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <ThemeSwitch tone="dark" />
+            <LanguageSwitch tone="dark" />
+          </div>
+          <div className="flex items-center gap-1 -ml-2">
             <button
               onClick={() => store.reloadFromDatabase()}
-              className="h-10 border border-white/40 text-sm text-white hover:border-white hover:bg-white/10 flex items-center justify-center gap-1.5"
+              className="h-9 px-3 rounded-full text-sm text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-1.5"
             >
               <RotateCcw size={15} />
               <span>{t('Refresh')}</span>
@@ -152,7 +184,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
                 // A full reload clears everything this login loaded before the next person signs in.
                 window.location.replace('/login');
               }}
-              className="h-10 border border-white/40 text-sm text-white hover:border-white hover:bg-white/10 flex items-center justify-center gap-1.5"
+              className="h-9 px-3 rounded-full text-sm text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-1.5"
             >
               <LogOut size={15} />
               <span>{t('Sign out')}</span>
