@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Theme tokens (RGB channels, so Tailwind can add opacity: bg-os-ink/40). */
+  :root,
+  :root[data-theme='mono'] {
+    color-scheme: light;
+    --os-ink: 15 15 15;
+    --os-paper: 255 255 255;
+    --os-page: 241 241 241;
+    --os-soft: 246 246 246;
+    --os-line: 217 217 217;
+    --os-muted: 77 77 77;
+    /* Black & white: the accent is black. */
+    --os-accent: 15 15 15;
+    --os-accent-dark: 0 0 0;
+  }
+  /* Red & white: the brand red #FF0000. */
+  :root[data-theme='red'] {
+    --os-accent: 255 0 0;
+    --os-accent-dark: 204 0 0;
+  }
+
+  html {
+    font-size: 16px;
+  }
+
+  body {
+    background-color: rgb(var(--os-page));
+    color: rgb(var(--os-ink));
+    font-family: 'Lato', 'Noto Sans Telugu', system-ui, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: 'Imbue', 'Bodoni Moda', 'Noto Sans Telugu', Georgia, serif;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  /* Telugu reads better a little larger and with more line height. */
+  html[lang='te'] body {
+    line-height: 1.65;
+  }
+
+  /* Big, clear keyboard focus for every control. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--os-accent));
+    outline-offset: 2px;
+  }
+  /* On the accent-coloured menu an accent ring would vanish - use white there. */
+  aside :focus-visible {
+    outline-color: #ffffff;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    opacity: 1;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--os-page));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--os-line));
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--os-muted));
+  }
+}
+
+@layer components {
+  /* A white card with a thin line - the one container used on every screen. */
+  .card {
+    @apply bg-os-paper border border-os-line;
+  }
+  /* Small grey label above a value or a field. */
+  .label {
+    @apply block text-sm font-bold text-os-muted;
+  }
+  /* Section title inside a card. */
+  .section-title {
+    @apply text-base font-bold text-os-ink;
+  }
+  .table-head {
+    @apply text-left text-sm font-bold text-os-muted bg-os-soft border-b border-os-line;
+  }
+  .field {
+    @apply w-full bg-os-paper text-os-ink text-base px-3.5 py-2.5 border border-os-line focus:border-os-ink focus:outline-none;
+  }
+}
+
+/* Print: only the document, never the app around it. */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print,
+  aside,
+  header,
+  nav,
+  button,
+  .toast-container {
+    display: none !important;
+  }
+}
