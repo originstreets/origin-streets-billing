@@ -154,6 +154,17 @@ begin
     insert into public.demo_seed_rows values ('products', v_pid);
   end loop;
 
+  -- Colour swatches, as if each colour had been picked on the colour wheel.
+  update public.product_variants v
+  set color_hex = c.hex
+  from (values
+    ('Black', '#1C1C1C'), ('White', '#F6F6F3'), ('Red', '#D3241C'), ('Off White', '#ECE6D8'), ('Grey', '#8C9096'),
+    ('Sand', '#CDB892'), ('Olive', '#6A7045'), ('Brown', '#6C4A32'), ('Sky Blue', '#A8C4E6'), ('Indigo', '#2D3A5C'),
+    ('Raw Indigo', '#1E2640'), ('Washed Blue', '#7D9BC0')
+  ) as c(name, hex)
+  where v.color = c.name
+    and v.product_id in (select id from public.demo_seed_rows where tbl = 'products');
+
   -- ---------------------------------------------------------------- customers
   for r in
     select * from (values
