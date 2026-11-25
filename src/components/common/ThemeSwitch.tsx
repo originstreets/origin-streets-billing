@@ -28,7 +28,7 @@ export const ThemeSwitch: React.FC<{ className?: string; tone?: 'light' | 'dark'
           <button
             key={o.value}
             type="button"
-            onClick={() => setTheme(o.value)}
+            onClick={(e) => setTheme(o.value, e.currentTarget)}
             aria-pressed={on}
             aria-label={t(o.label)}
             title={t(o.label)}

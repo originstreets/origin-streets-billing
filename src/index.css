@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme switch reveal (see src/theme): the new colours are drawn over the old
+   ones by a clip that grows from the tapped swatch; no fade, no blending. */
+.theme-swap::view-transition-old(root),
+.theme-swap::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 @layer base {
   /* Theme tokens (RGB channels, so Tailwind can add opacity: bg-os-ink/40).
      Origin: two colours per theme, never mixed - black & white, or red &
