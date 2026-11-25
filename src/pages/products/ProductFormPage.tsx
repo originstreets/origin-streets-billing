@@ -6,6 +6,7 @@ import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { Check, Plus, Save, Shirt, X } from 'lucide-react';
 import { PhotoPicker } from '../../components/common/PhotoPicker';
+import { ColourDot, ColourPicker, PickedColour } from '../../components/common/ColourPicker';
 import { useT } from '../../i18n';
 import { formatINR } from '../../utils/formatters';
 
@@ -33,8 +34,18 @@ export const ProductFormPage: React.FC = () => {
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState('');
   const [sizes, setSizes] = useState<string[]>([]);
-  const [colours, setColours] = useState<string[]>([]);
-  const [colourText, setColourText] = useState('');
+  const [colours, setColours] = useState<PickedColour[]>([]);
+  const [pickingColour, setPickingColour] = useState(false);
+  // Optional photo per colour (the red shirt and the blue shirt look different).
+  const [colourPhotos, setColourPhotos] = useState<Record<string, { file: File; preview: string }>>({});
+  const setColourPhoto = (colour: string, file: File | null) =>
+    setColourPhotos((prev) => {
+      const next = { ...prev };
+      if (next[colour]) URL.revokeObjectURL(next[colour].preview);
+      if (file) next[colour] = { file, preview: URL.createObjectURL(file) };
+      else delete next[colour];
+      return next;
+    });
   const [stock, setStock] = useState<Record<string, string>>({});
   const [customPrices, setCustomPrices] = useState(false);
   const [cellPrice, setCellPrice] = useState<Record<string, string>>({});
@@ -60,32 +71,17 @@ export const ProductFormPage: React.FC = () => {
     () => (category ? category.sizes.map((z) => z.size).filter((z) => sizes.includes(z)) : []),
     [category, sizes]
   );
-  // No colour typed -> one row per size, without a colour name.
-  const rows = colours.length > 0 ? colours : [''];
+  // No colour added -> one row per size, without a colour name.
+  const rows = colours.length > 0 ? colours.map((c) => c.name) : [''];
+  const hexOf = (name: string) => colours.find((c) => c.name === name)?.hex;
   const priceNumber = Number(price);
   const priceOk = price.trim() !== '' && Number.isFinite(priceNumber) && priceNumber >= 0;
 
   const toggleSize = (z: string) => setSizes((prev) => (prev.includes(z) ? prev.filter((x) => x !== z) : [...prev, z]));
 
-  const addColours = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    const typed = colourText
-      .split(',')
-      .map((c) => c.trim().replace(/\s+/g, ' '))
-      .filter(Boolean);
-    if (typed.length === 0) return;
-    setColours((prev) => {
-      const seen = new Set(prev.map((c) => c.toLowerCase()));
-      const next = [...prev];
-      typed.forEach((c) => {
-        if (!seen.has(c.toLowerCase())) {
-          seen.add(c.toLowerCase());
-          next.push(c);
-        }
-      });
-      return next;
-    });
-    setColourText('');
+  const addColour = (c: PickedColour) => {
+    setColours((prev) => (prev.some((x) => x.name.toLowerCase() === c.name.toLowerCase()) ? prev : [...prev, c]));
+    setPickingColour(false);
   };
 
   const totalPieces = rows.reduce(
@@ -107,7 +103,7 @@ export const ProductFormPage: React.FC = () => {
         const key = cellKey(c, z);
         const pieces = stock[key]?.trim() ? Number(stock[key]) : 0;
         const ownPrice = customPrices && cellPrice[key]?.trim() ? Number(cellPrice[key]) : priceNumber;
-        return { color: c || null, size: z, stock: pieces, price: ownPrice };
+        return { color: c || null, color_hex: c ? hexOf(c) || null : null, image_url: null as string | null, size: z, stock: pieces, price: ownPrice };
       })
     );
     if (variants.some((v) => !Number.isInteger(v.stock) || v.stock < 0)) problems.push(t('Stock must be whole numbers, 0 or more.'));
@@ -121,6 +117,14 @@ export const ProductFormPage: React.FC = () => {
     setSaving(true);
     try {
       const imageUrl = photo ? await store.uploadProductPhoto(photo) : null;
+      // Colour photos are uploaded first, then saved on that colour's rows.
+      for (const [colour, { file }] of Object.entries(colourPhotos)) {
+        if (!rows.includes(colour)) continue;
+        const url = await store.uploadProductPhoto(file);
+        variants.forEach((v) => {
+          if (v.color === colour) v.image_url = url;
+        });
+      }
       const id = await store.createProduct({
         name: name.trim(),
         categoryId: category!.id,
@@ -257,39 +261,49 @@ export const ProductFormPage: React.FC = () => {
 
       {/* 3. Colours */}
       <section className="card">
-        {step(3, t('Colours'), t('Type each colour this product comes in. Leave it empty if it has only one colour.'))}
-        <div className="p-5 space-y-3">
-          <form onSubmit={addColours} className="flex gap-2">
-            <input
-              className="field h-11"
-              value={colourText}
-              onChange={(e) => setColourText(e.target.value)}
-              placeholder={t('For example: Red, Blue')}
-              aria-label={t('Colour')}
-              maxLength={120}
-            />
-            <Button type="submit" variant="secondary" icon={<Plus size={18} />} disabled={!colourText.trim()} className="h-11 shrink-0">
-              {t('Add')}
-            </Button>
-          </form>
+        {step(3, t('Colours'), t('Pick each colour this product comes in. Skip it if it has only one colour.'))}
+        <div className="p-5 space-y-4">
           {colours.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className="bg-os-paper divide-y divide-os-line">
               {colours.map((c) => (
-                <span key={c} className="h-11 pl-4 pr-1 rounded-full bg-os-ink text-white flex items-center gap-1 text-base font-semibold">
-                  {c}
-                  <button
-                    type="button"
-                    onClick={() => setColours((prev) => prev.filter((x) => x !== c))}
-                    aria-label={t('Remove colour {c}', { c })}
-                    className="h-9 w-9 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/15"
-                  >
-                    <X size={16} />
-                  </button>
-                </span>
+                <div key={c.name} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                  <span className="flex items-center gap-3 text-base font-semibold min-w-0">
+                    <ColourDot hex={c.hex} size={28} />
+                    <span className="truncate">{c.name}</span>
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <PhotoPicker
+                      compact
+                      label={c.name}
+                      preview={colourPhotos[c.name]?.preview || ''}
+                      onPick={(file) => setColourPhoto(c.name, file)}
+                      onRemove={colourPhotos[c.name] ? () => setColourPhoto(c.name, null) : undefined}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setColourPhoto(c.name, null);
+                        setColours((prev) => prev.filter((x) => x.name !== c.name));
+                      }}
+                      aria-label={t('Remove colour {c}', { c: c.name })}
+                      title={t('Remove colour {c}', { c: c.name })}
+                      className="h-9 w-9 rounded-full flex items-center justify-center text-os-muted hover:text-status-red hover:bg-status-redBg"
+                    >
+                      <X size={17} />
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           )}
+          {colours.length > 0 && <p className="text-sm text-os-muted">{t('A photo for each colour is optional. It shows when that colour is picked.')}</p>}
+          <Button type="button" variant="primary" icon={<Plus size={18} />} onClick={() => setPickingColour(true)}>
+            {t('Add colour')}
+          </Button>
         </div>
+        {pickingColour && (
+          <ColourPicker taken={colours.map((c) => c.name)} onSelect={addColour} onClose={() => setPickingColour(false)} />
+        )}
       </section>
 
       {/* 4. Stock */}
@@ -315,7 +329,12 @@ export const ProductFormPage: React.FC = () => {
                   <tbody className="divide-y divide-os-line">
                     {rows.map((c) => (
                       <tr key={c || '-'}>
-                        <td className="py-3 px-4 font-bold whitespace-nowrap">{c || t('One colour')}</td>
+                        <td className="py-3 px-4 font-semibold whitespace-nowrap">
+                          <span className="inline-flex items-center gap-2">
+                            <ColourDot hex={c ? hexOf(c) : undefined} />
+                            {c || t('One colour')}
+                          </span>
+                        </td>
                         {orderedSizes.map((z) => {
                           const key = cellKey(c, z);
                           return (

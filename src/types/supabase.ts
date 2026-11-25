@@ -46,6 +46,8 @@ export interface DbProductVariant {
   size: string | null;
   color: string | null;
   color_hex: string | null;
+  // The colour's own photo (optional, same on every size of that colour).
+  image_url: string | null;
   stock: number;
   price: number;
   compare_price: number | null;

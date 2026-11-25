@@ -12,6 +12,7 @@ import { Product, ProductVariant, PaymentSplit, Order } from '../../types';
 import { printBill } from '../../utils/printBill';
 import { methodWord } from '../../utils/paymentWords';
 import { useT } from '../../i18n';
+import { ColourDot } from '../../components/common/ColourPicker';
 import {
   Search,
   Plus,
@@ -1146,7 +1147,18 @@ export const PosBillingPage: React.FC = () => {
                           pickerColor === c ? 'bg-os-ink text-white ring-os-ink' : 'ring-os-line hover:ring-os-ink'
                         } ${colourStock <= 0 ? 'opacity-50' : ''}`}
                       >
-                        <div className="text-base font-semibold">{c || t('No colour')}</div>
+                        <div className="text-base font-semibold flex items-center gap-2">
+                          {activeVariantProduct.variants.find((v) => v.color === c)?.imageUrl ? (
+                            <img
+                              src={activeVariantProduct.variants.find((v) => v.color === c)?.imageUrl}
+                              alt=""
+                              className="w-9 h-11 object-cover rounded-sm -my-1 -ml-2"
+                            />
+                          ) : (
+                            <ColourDot hex={activeVariantProduct.variants.find((v) => v.color === c)?.colorHex} />
+                          )}
+                          {c || t('No colour')}
+                        </div>
                         <div className="text-sm">{colourStock <= 0 ? t('Sold out') : t('{n} in stock', { n: colourStock })}</div>
                       </button>
                     );

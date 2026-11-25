@@ -573,6 +573,14 @@ export const store = {
     store.addToast(tr('Product saved'), undefined, 'success');
   },
 
+  // A colour's own photo: uploaded, then put on every size of that colour.
+  setColourPhoto: async (productId: string, colour: string, file: File | null) => {
+    const url = file ? await posApi.uploadProductPhoto(file) : null;
+    await posApi.setColourPhoto(productId, colour, url);
+    await reloadCatalogue();
+    store.addToast(file ? tr('Colour photo saved') : tr('Colour photo removed'), colour || undefined, 'success');
+  },
+
   updateVariantPrice: async (variantId: string, price: number) => {
     await posApi.updateVariantPrices([variantId], price);
     await reloadCatalogue();

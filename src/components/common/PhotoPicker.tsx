@@ -14,7 +14,10 @@ export const PhotoPicker: React.FC<{
   preview: string;
   onPick: (file: File) => void;
   onRemove?: () => void;
-}> = ({ preview, onPick, onRemove }) => {
+  // compact: a small thumbnail with round camera / upload buttons (one per colour).
+  compact?: boolean;
+  label?: string;
+}> = ({ preview, onPick, onRemove, compact, label }) => {
   const t = useT();
   const uploadRef = useRef<HTMLInputElement>(null);
   const captureRef = useRef<HTMLInputElement>(null);
@@ -32,9 +35,54 @@ export const PhotoPicker: React.FC<{
     e.target.value = '';
   };
 
+  const inputs = (
+    <>
+      <input ref={uploadRef} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" tabIndex={-1} onChange={fromInput} />
+      <input ref={captureRef} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} onChange={fromInput} />
+      {cameraOpen && (
+        <CameraModal
+          onClose={() => setCameraOpen(false)}
+          onUse={(file) => {
+            onPick(file);
+            setCameraOpen(false);
+          }}
+        />
+      )}
+    </>
+  );
+
+  if (compact) {
+    const round = 'h-9 w-9 rounded-full flex items-center justify-center bg-os-paper ring-1 ring-inset ring-os-line hover:ring-os-ink transition-colors';
+    return (
+      <div className="flex items-center gap-2">
+        <div className="w-12 h-14 bg-os-soft overflow-hidden shrink-0 flex items-center justify-center text-os-muted">
+          {preview ? <img src={preview} alt="" className="w-full h-full object-cover" /> : <Camera size={18} />}
+        </div>
+        <button type="button" onClick={takePhoto} className={round} aria-label={`${t('Take photo')}${label ? ` · ${label}` : ''}`} title={t('Take photo')}>
+          <Camera size={16} />
+        </button>
+        <button
+          type="button"
+          onClick={() => uploadRef.current?.click()}
+          className={round}
+          aria-label={`${t('Upload photo')}${label ? ` · ${label}` : ''}`}
+          title={t('Upload photo')}
+        >
+          <ImageUp size={16} />
+        </button>
+        {preview && onRemove && (
+          <button type="button" onClick={onRemove} className="text-sm font-semibold underline text-os-muted hover:text-status-red">
+            {t('Remove')}
+          </button>
+        )}
+        {inputs}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2.5">
-      <span className="label">{t('Photo')}</span>
+      <span className="label">{label || t('Photo')}</span>
       <div className="aspect-[4/5] w-full bg-os-soft flex items-center justify-center overflow-hidden">
         {preview ? (
           <img src={preview} alt="" className="w-full h-full object-cover" />
@@ -58,17 +106,7 @@ export const PhotoPicker: React.FC<{
           </button>
         )}
       </div>
-      <input ref={uploadRef} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" tabIndex={-1} onChange={fromInput} />
-      <input ref={captureRef} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} onChange={fromInput} />
-      {cameraOpen && (
-        <CameraModal
-          onClose={() => setCameraOpen(false)}
-          onUse={(file) => {
-            onPick(file);
-            setCameraOpen(false);
-          }}
-        />
-      )}
+      {inputs}
     </div>
   );
 };

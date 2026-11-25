@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Plus, X } from 'lucide-react';
 import { PhotoPicker } from '../../components/common/PhotoPicker';
+import { ColourDot, ColourPicker, PickedColour } from '../../components/common/ColourPicker';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -162,39 +163,28 @@ export const AddVariantsModal: React.FC<{ product: Product; onClose: () => void 
   const productHasNoColour = product.variants.length > 0 && product.colors.length === 0;
 
   const [sizes, setSizes] = useState<string[]>(product.sizes);
-  const [colours, setColours] = useState<string[]>(product.colors);
-  const [colourText, setColourText] = useState('');
+  // Colours already on the product keep their swatch; new ones come from the wheel.
+  const [colours, setColours] = useState<PickedColour[]>(() =>
+    product.colors.map((name) => ({ name, hex: product.variants.find((v) => v.color === name)?.colorHex || '' }))
+  );
+  const [pickingColour, setPickingColour] = useState(false);
   const [stock, setStock] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
   const orderedSizes = sizeChoices.filter((z) => sizes.includes(z));
-  const rows = colours.length > 0 ? colours : [''];
+  const rows = colours.length > 0 ? colours.map((c) => c.name) : [''];
+  const hexOf = (name: string) => colours.find((c) => c.name === name)?.hex || null;
   const newCombos = rows.flatMap((c) => orderedSizes.filter((z) => !existing.has(comboKey(c, z))).map((z) => ({ c, z })));
 
-  const addColours = (e: React.FormEvent) => {
-    e.preventDefault();
-    const typed = colourText
-      .split(',')
-      .map((c) => c.trim().replace(/\s+/g, ' '))
-      .filter(Boolean);
-    setColours((prev) => {
-      const seen = new Set(prev.map((c) => c.toLowerCase()));
-      const next = [...prev];
-      typed.forEach((c) => {
-        if (!seen.has(c.toLowerCase())) {
-          seen.add(c.toLowerCase());
-          next.push(c);
-        }
-      });
-      return next;
-    });
-    setColourText('');
+  const addColour = (c: PickedColour) => {
+    setColours((prev) => (prev.some((x) => x.name.toLowerCase() === c.name.toLowerCase()) ? prev : [...prev, c]));
+    setPickingColour(false);
   };
 
   const handleSave = async () => {
     const variants = newCombos.map(({ c, z }) => {
       const raw = stock[comboKey(c, z)]?.trim();
-      return { color: c || null, size: z, stock: raw ? Number(raw) : 0, price: product.price };
+      return { color: c || null, color_hex: c ? hexOf(c) : null, size: z, stock: raw ? Number(raw) : 0, price: product.price };
     });
     if (variants.length === 0) {
       store.addToast(t('Nothing new to add'), t('Tick a new size or add a new colour.'), 'warning');
@@ -266,32 +256,23 @@ export const AddVariantsModal: React.FC<{ product: Product; onClose: () => void 
         <div className="space-y-2">
           <div className="label">{t('Colours')}</div>
           {productHasNoColour && <p className="text-sm text-os-muted">{t('This product has no colour names. New colours are added next to it.')}</p>}
-          <form onSubmit={addColours} className="flex gap-2">
-            <input
-              className="field h-11"
-              value={colourText}
-              onChange={(e) => setColourText(e.target.value)}
-              placeholder={t('For example: Red, Blue')}
-              aria-label={t('Colour')}
-              maxLength={120}
-            />
-            <Button type="submit" variant="secondary" icon={<Plus size={18} />} disabled={!colourText.trim()} className="h-11 shrink-0">
-              {t('Add')}
-            </Button>
-          </form>
           {colours.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {colours.map((c) => {
-                const isOld = product.colors.includes(c);
+                const isOld = product.colors.includes(c.name);
                 return (
-                  <span key={c} className="h-10 pl-4 pr-1 rounded-full bg-os-ink text-white flex items-center gap-1 text-base font-semibold">
-                    {c}
+                  <span
+                    key={c.name}
+                    className={`h-10 pl-2 rounded-full bg-os-paper ring-1 ring-inset ring-os-line flex items-center gap-2 text-base font-semibold ${isOld ? 'pr-4' : 'pr-1'}`}
+                  >
+                    <ColourDot hex={c.hex} size={24} />
+                    {c.name}
                     {!isOld && (
                       <button
                         type="button"
-                        onClick={() => setColours((prev) => prev.filter((x) => x !== c))}
-                        aria-label={t('Remove colour {c}', { c })}
-                        className="h-8 w-8 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/15"
+                        onClick={() => setColours((prev) => prev.filter((x) => x.name !== c.name))}
+                        aria-label={t('Remove colour {c}', { c: c.name })}
+                        className="h-8 w-8 rounded-full flex items-center justify-center text-os-muted hover:text-status-red hover:bg-status-redBg"
                       >
                         <X size={15} />
                       </button>
@@ -300,6 +281,12 @@ export const AddVariantsModal: React.FC<{ product: Product; onClose: () => void 
                 );
               })}
             </div>
+          )}
+          <Button type="button" variant="secondary" icon={<Plus size={18} />} onClick={() => setPickingColour(true)}>
+            {t('Add colour')}
+          </Button>
+          {pickingColour && (
+            <ColourPicker taken={colours.map((c) => c.name)} onSelect={addColour} onClose={() => setPickingColour(false)} />
           )}
         </div>
 
@@ -321,7 +308,12 @@ export const AddVariantsModal: React.FC<{ product: Product; onClose: () => void 
                 <tbody className="divide-y divide-os-line">
                   {rows.map((c) => (
                     <tr key={c || '-'}>
-                      <td className="py-3 px-4 font-bold whitespace-nowrap">{c || t('One colour')}</td>
+                      <td className="py-3 px-4 font-semibold whitespace-nowrap">
+                        <span className="inline-flex items-center gap-2">
+                          <ColourDot hex={c ? hexOf(c) : undefined} />
+                          {c || t('One colour')}
+                        </span>
+                      </td>
                       {orderedSizes.map((z) => {
                         const key = comboKey(c, z);
                         return (

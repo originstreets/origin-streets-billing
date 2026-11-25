@@ -50,6 +50,7 @@ function mapVariant(v: DbProductVariant): ProductVariant {
     sku: variantCode(v),
     color: v.color || '',
     colorHex: v.color_hex || undefined,
+    imageUrl: v.image_url || undefined,
     size: v.size || '',
     price: v.price,
     compareAtPrice: v.compare_price ?? undefined,
@@ -205,6 +206,8 @@ export interface NewVariantInput {
   color: string | null;
   // The colour picked on the colour wheel (sent as-is to the database).
   color_hex?: string | null;
+  // The colour's own photo (optional).
+  image_url?: string | null;
   size: string;
   price: number;
   stock: number;
@@ -259,6 +262,14 @@ export async function updateProduct(
 export async function updateVariantPrices(variantIds: string[], price: number): Promise<void> {
   if (variantIds.length === 0) return;
   const { error } = await supabase.from('product_variants').update({ price }).in('id', variantIds);
+  if (error) throw new Error(error.message);
+}
+
+// A colour's own photo, on every size of that colour (null removes it).
+export async function setColourPhoto(productId: string, colour: string, imageUrl: string | null): Promise<void> {
+  let q = supabase.from('product_variants').update({ image_url: imageUrl }).eq('product_id', productId);
+  q = colour ? q.eq('color', colour) : q.is('color', null);
+  const { error } = await q;
   if (error) throw new Error(error.message);
 }
 

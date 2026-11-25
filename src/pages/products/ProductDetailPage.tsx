@@ -10,6 +10,8 @@ import { formatINR } from '../../utils/formatters';
 import { ArrowLeft, Shirt, Tag, Plus, Minus, PlusCircle, Pencil, Trash2, Layers } from 'lucide-react';
 import { useT } from '../../i18n';
 import { AddVariantsModal, DeleteProductModal, EditDetailsModal, VariantPriceModal } from './ProductEditModals';
+import { ColourDot } from '../../components/common/ColourPicker';
+import { PhotoPicker } from '../../components/common/PhotoPicker';
 import { variantStockStatus } from '../../utils/stock';
 import { ONE_SIZE } from '../../utils/singleItem';
 
@@ -133,6 +135,53 @@ export const ProductDetailPage: React.FC = () => {
         </div>
       </div>
 
+      {product.colors.length > 0 && (
+        <div className="card">
+          <div className="px-5 pt-5 pb-3">
+            <h2 className="font-display text-2xl">{t('Colour photos')}</h2>
+            <p className="text-base text-os-muted">{t('Optional. It shows when that colour is picked.')}</p>
+          </div>
+          <div className="px-5 pb-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
+            {product.colors.map((c) => {
+              const first = product.variants.find((v) => v.color === c);
+              return (
+                <div key={c} className="bg-os-paper px-4 py-3 flex items-center justify-between gap-3">
+                  <span className="flex items-center gap-2.5 text-base font-semibold min-w-0">
+                    <ColourDot hex={first?.colorHex} size={22} />
+                    <span className="truncate">{c}</span>
+                  </span>
+                  <PhotoPicker
+                    compact
+                    label={c}
+                    preview={first?.imageUrl || ''}
+                    onPick={async (file) => {
+                      setBusy(true);
+                      try {
+                        await store.setColourPhoto(product.id, c, file);
+                      } catch (err) {
+                        store.addToast(t('Photo not saved'), err instanceof Error ? err.message : undefined, 'error');
+                      } finally {
+                        setBusy(false);
+                      }
+                    }}
+                    onRemove={
+                      first?.imageUrl
+                        ? async () => {
+                            try {
+                              await store.setColourPhoto(product.id, c, null);
+                            } catch (err) {
+                              store.addToast(t('Photo not saved'), err instanceof Error ? err.message : undefined, 'error');
+                            }
+                          }
+                        : undefined
+                    }
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
       <div className="card overflow-hidden">
         <div className="px-5 py-4 border-b border-os-line">
           <h2 className="font-display text-2xl">{t('Stock by colour and size')}</h2>
@@ -159,7 +208,12 @@ export const ProductDetailPage: React.FC = () => {
               <tbody className="divide-y divide-os-line">
                 {product.variants.map((v) => (
                   <tr key={v.id}>
-                    <td className="py-3 px-5 font-bold">{v.color || '—'}</td>
+                    <td className="py-3 px-5 font-semibold">
+                      <span className="inline-flex items-center gap-2">
+                        <ColourDot hex={v.colorHex} />
+                        {v.color || '—'}
+                      </span>
+                    </td>
                     <td className="py-3 px-4 font-bold">{sizeText(v.size)}</td>
                     <td className="py-3 px-4 text-os-muted">{v.sku}</td>
                     <td className="py-3 px-4 text-right">
