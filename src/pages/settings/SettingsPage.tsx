@@ -391,7 +391,7 @@ const PermissionPicker: React.FC<{ value: PermissionKey[]; onToggle: (k: Permiss
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 border border-os-line p-2">
         {ALL_PERMISSIONS.map((key) => (
           <label key={key} className="flex items-center gap-3 px-2 py-2 text-base cursor-pointer hover:bg-os-soft">
-            <input type="checkbox" checked={value.includes(key)} onChange={() => onToggle(key)} className="w-5 h-5 accent-os-ink" />
+            <input type="checkbox" checked={value.includes(key)} onChange={() => onToggle(key)} className="w-5 h-5 accent-os-accent" />
             {t(PERMISSION_LABELS[key])}
           </label>
         ))}
@@ -448,7 +448,7 @@ const StaffAccessEditor: React.FC<{
       <div className="space-y-4">
         <Select label={t('Job')} value={role} onChange={(e) => setRole(e.target.value as DbStaffRole)} options={roleOptions} />
         <label className="flex items-center gap-3 text-base cursor-pointer">
-          <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} className="w-5 h-5 accent-os-ink" />
+          <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} className="w-5 h-5 accent-os-accent" />
           {t('Login is on (turn off to stop this person signing in)')}
         </label>
         <PermissionPicker value={permissions} onToggle={togglePermission} />

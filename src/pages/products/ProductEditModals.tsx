@@ -106,7 +106,7 @@ export const EditDetailsModal: React.FC<{ product: Product; onClose: () => void 
               onChange={(e) => setPrice(e.target.value)}
             />
             <label className="flex items-start gap-3 text-base cursor-pointer">
-              <input type="checkbox" checked={applyToAll} onChange={(e) => setApplyToAll(e.target.checked)} className="w-5 h-5 mt-0.5 accent-os-ink" />
+              <input type="checkbox" checked={applyToAll} onChange={(e) => setApplyToAll(e.target.checked)} className="w-5 h-5 mt-0.5 accent-os-accent" />
               <span>
                 {t('Also use this price for every colour and size')}
                 {!allAtProductPrice && <span className="block text-sm text-os-muted">{t('Some colours or sizes have their own price now.')}</span>}
@@ -240,8 +240,8 @@ export const AddVariantsModal: React.FC<{ product: Product; onClose: () => void 
                     type="button"
                     aria-pressed={on}
                     onClick={() => setSizes((prev) => (prev.includes(z) ? prev.filter((x) => x !== z) : [...prev, z]))}
-                    className={`min-w-[3.25rem] h-11 px-4 rounded-full ring-1 ring-inset text-base font-semibold flex items-center justify-center gap-1.5 ${
-                      on ? 'bg-os-ink text-white ring-os-ink' : 'bg-os-paper ring-os-line hover:ring-os-ink'
+                    className={`min-w-[3.25rem] h-11 px-4 ring-1 ring-inset text-base font-semibold flex items-center justify-center gap-1.5 ${
+                      on ? 'bg-os-accent text-white ring-os-accent' : 'bg-os-paper ring-os-line hover:ring-os-accent'
                     }`}
                   >
                     {on && <Check size={15} />}
@@ -263,7 +263,7 @@ export const AddVariantsModal: React.FC<{ product: Product; onClose: () => void 
                 return (
                   <span
                     key={c.name}
-                    className={`h-10 pl-2 rounded-full bg-os-paper ring-1 ring-inset ring-os-line flex items-center gap-2 text-base font-semibold ${isOld ? 'pr-4' : 'pr-1'}`}
+                    className={`h-10 pl-2 bg-os-paper ring-1 ring-inset ring-os-line flex items-center gap-2 text-base font-semibold ${isOld ? 'pr-4' : 'pr-1'}`}
                   >
                     <ColourDot hex={c.hex} size={24} />
                     {c.name}
@@ -272,7 +272,7 @@ export const AddVariantsModal: React.FC<{ product: Product; onClose: () => void 
                         type="button"
                         onClick={() => setColours((prev) => prev.filter((x) => x.name !== c.name))}
                         aria-label={t('Remove colour {c}', { c: c.name })}
-                        className="h-8 w-8 rounded-full flex items-center justify-center text-os-muted hover:text-status-red hover:bg-status-redBg"
+                        className="h-8 w-8 flex items-center justify-center text-os-muted hover:text-status-red hover:bg-status-redBg"
                       >
                         <X size={15} />
                       </button>

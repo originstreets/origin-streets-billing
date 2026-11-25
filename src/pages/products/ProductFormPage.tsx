@@ -143,7 +143,7 @@ export const ProductFormPage: React.FC = () => {
 
   const step = (n: number, title: string, text?: string) => (
     <div className="px-5 py-4 border-b border-os-line flex items-start gap-3">
-      <span className="h-8 w-8 rounded-full bg-os-accent text-white text-base font-semibold flex items-center justify-center shrink-0">{n}</span>
+      <span className="h-8 w-8 bg-os-accent text-white text-base font-semibold flex items-center justify-center shrink-0">{n}</span>
       <div>
         <h2 className="font-display text-2xl leading-tight">{title}</h2>
         {text && <p className="text-base text-os-muted">{text}</p>}
@@ -236,8 +236,8 @@ export const ProductFormPage: React.FC = () => {
                       type="button"
                       onClick={() => toggleSize(z.size)}
                       aria-pressed={on}
-                      className={`min-w-[3.5rem] h-12 px-4 rounded-full ring-1 ring-inset text-base font-semibold flex items-center justify-center gap-1.5 transition-colors ${
-                        on ? 'bg-os-ink text-white ring-os-ink' : 'bg-os-paper ring-os-line hover:ring-os-ink'
+                      className={`min-w-[3.5rem] h-12 px-4 ring-1 ring-inset text-base font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                        on ? 'bg-os-accent text-white ring-os-accent' : 'bg-os-paper ring-os-line hover:ring-os-accent'
                       }`}
                     >
                       {on && <Check size={16} />}
@@ -287,7 +287,7 @@ export const ProductFormPage: React.FC = () => {
                       }}
                       aria-label={t('Remove colour {c}', { c: c.name })}
                       title={t('Remove colour {c}', { c: c.name })}
-                      className="h-9 w-9 rounded-full flex items-center justify-center text-os-muted hover:text-status-red hover:bg-status-redBg"
+                      className="h-9 w-9 flex items-center justify-center text-os-muted hover:text-status-red hover:bg-status-redBg"
                     >
                       <X size={17} />
                     </button>
@@ -372,7 +372,7 @@ export const ProductFormPage: React.FC = () => {
                 </table>
               </div>
               <label className="flex items-center gap-3 text-base cursor-pointer">
-                <input type="checkbox" checked={customPrices} onChange={(e) => setCustomPrices(e.target.checked)} className="w-5 h-5 accent-os-ink" />
+                <input type="checkbox" checked={customPrices} onChange={(e) => setCustomPrices(e.target.checked)} className="w-5 h-5 accent-os-accent" />
                 {t('Different price for some colours or sizes')}
               </label>
               {customPrices && (
@@ -387,7 +387,7 @@ export const ProductFormPage: React.FC = () => {
         </div>
       </section>
 
-      <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 sm:px-5 py-3 bg-os-paper border-t-2 border-os-ink flex flex-wrap items-center justify-between gap-3">
+      <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 sm:px-5 py-3 bg-os-paper border-t-2 border-os-accent flex flex-wrap items-center justify-between gap-3">
         <div className="text-base">
           <b>{rows.length * orderedSizes.length}</b> {t('colour and size rows')} · <b>{totalPieces}</b> {t('pieces')}
         </div>

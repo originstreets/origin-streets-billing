@@ -513,13 +513,13 @@ export const PosBillingPage: React.FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   });
 
-  // A filter you tap: a pill, black when chosen (index.css .chip).
+  // A filter you tap, filled when chosen (index.css .chip).
   const pill = (active: boolean) => `chip ${active ? 'chip-on' : ''}`;
 
   const stepTitle = (n: number, text: string, right?: React.ReactNode) => (
     <div className="flex items-center justify-between gap-2 mb-3">
       <div className="flex items-center gap-2">
-        <span className="h-7 w-7 rounded-full bg-os-accent text-white text-sm font-semibold flex items-center justify-center">{n}</span>
+        <span className="h-7 w-7 bg-os-accent text-white text-sm font-semibold flex items-center justify-center">{n}</span>
         <span className="text-lg font-bold">{text}</span>
       </div>
       {right}
@@ -533,7 +533,7 @@ export const PosBillingPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setMobileCartOpen(true)}
-            className="lg:hidden h-11 rounded-full bg-os-ink text-white px-5 text-[0.9375rem] font-semibold flex items-center gap-2"
+            className="lg:hidden h-11 bg-os-accent text-white px-5 text-[0.9375rem] font-semibold flex items-center gap-2"
           >
             <ShoppingBag size={18} />
             {t('Bill')} ({totalItemCount}) · {formatINR(grandTotal)}
@@ -588,9 +588,9 @@ export const PosBillingPage: React.FC = () => {
                           </div>
                         )}
                         <div className="absolute top-1.5 left-1.5 flex flex-col gap-1 items-start">
-                          {prod.status === 'ARCHIVED' && <span className="bg-os-paper text-os-ink text-xs font-semibold px-2 py-0.5 rounded-full">{t('Hidden')}</span>}
+                          {prod.status === 'ARCHIVED' && <span className="bg-os-paper text-os-ink text-xs font-semibold px-2 py-0.5">{t('Hidden')}</span>}
                         </div>
-                        <div className="absolute bottom-1.5 right-1.5 bg-os-ink/90 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                        <div className="absolute bottom-1.5 right-1.5 bg-os-accent/90 text-white text-xs font-semibold px-2 py-0.5">
                           {prod.needsSizeCounts ? t('no sizes yet') : t('{n} in stock', { n: prod.totalStock })}
                         </div>
                       </div>
@@ -605,7 +605,7 @@ export const PosBillingPage: React.FC = () => {
                             type="button"
                             disabled={v.stock <= 0}
                             onClick={() => handleAddVariantToCart(prod, v)}
-                            className="min-w-[2.75rem] h-10 px-3 rounded-full bg-os-paper ring-1 ring-inset ring-os-line hover:bg-os-ink hover:text-white hover:ring-os-ink text-sm font-semibold disabled:opacity-30"
+                            className="min-w-[2.75rem] h-10 px-3 bg-os-paper ring-1 ring-inset ring-os-line hover:bg-os-accent hover:text-white hover:ring-os-accent text-sm font-semibold disabled:opacity-30"
                             title={t('{n} in stock', { n: v.stock })}
                           >
                             {sizeText(v.size)}
@@ -622,13 +622,13 @@ export const PosBillingPage: React.FC = () => {
 
         {/* ---------------- the bill ---------------- */}
         <div
-          className={`lg:col-span-5 lg:sticky lg:top-6 lg:max-h-[calc(100vh-48px)] overflow-y-auto bg-os-paper lg:ring-2 lg:ring-os-ink ${
+          className={`lg:col-span-5 lg:sticky lg:top-6 lg:max-h-[calc(100vh-48px)] overflow-y-auto bg-os-paper lg:ring-2 lg:ring-os-accent ${
             mobileCartOpen ? 'fixed inset-0 z-50 block' : 'hidden lg:block'
           }`}
         >
           <div className="lg:hidden flex items-center justify-between px-4 h-14 border-b border-os-line sticky top-0 bg-os-paper z-20">
             <span className="text-lg font-bold">{t('Bill')}</span>
-            <button onClick={() => setMobileCartOpen(false)} className="h-11 w-11 rounded-full flex items-center justify-center hover:bg-os-soft" aria-label={t('Close')}>
+            <button onClick={() => setMobileCartOpen(false)} className="h-11 w-11 flex items-center justify-center hover:bg-os-soft" aria-label={t('Close')}>
               <X size={22} />
             </button>
           </div>
@@ -685,7 +685,7 @@ export const PosBillingPage: React.FC = () => {
                   <div className="text-sm text-os-muted">{t('No saved customer found.')}</div>
                 )}
                 {isAddingCustomer && (
-                  <form onSubmit={handleQuickAddCustomer} className="p-3 border border-os-ink space-y-2">
+                  <form onSubmit={handleQuickAddCustomer} className="p-3 border border-os-accent space-y-2">
                     <input
                       type="text"
                       required
@@ -719,7 +719,7 @@ export const PosBillingPage: React.FC = () => {
 
             <div className="mt-3">
               <label className="flex items-center gap-3 cursor-pointer w-fit text-base">
-                <input type="checkbox" checked={gstEnabled} onChange={(e) => setGstEnabled(e.target.checked)} className="w-5 h-5 accent-os-ink" />
+                <input type="checkbox" checked={gstEnabled} onChange={(e) => setGstEnabled(e.target.checked)} className="w-5 h-5 accent-os-accent" />
                 {t('Business customer (add their GSTIN)')}
               </label>
               {gstEnabled && (
@@ -790,7 +790,7 @@ export const PosBillingPage: React.FC = () => {
                         <div className="flex items-center">
                           <button
                             onClick={() => handleUpdateQuantity(item.variant.id, -1)}
-                            className="w-11 h-11 rounded-full ring-1 ring-inset ring-os-line hover:ring-os-ink flex items-center justify-center"
+                            className="w-11 h-11 ring-1 ring-inset ring-os-line hover:ring-os-accent flex items-center justify-center"
                             aria-label={t('One less')}
                           >
                             <Minus size={18} />
@@ -798,7 +798,7 @@ export const PosBillingPage: React.FC = () => {
                           <span className="w-10 text-center text-lg font-black">{item.quantity}</span>
                           <button
                             onClick={() => handleUpdateQuantity(item.variant.id, 1)}
-                            className="w-11 h-11 rounded-full ring-1 ring-inset ring-os-line hover:ring-os-ink flex items-center justify-center"
+                            className="w-11 h-11 ring-1 ring-inset ring-os-line hover:ring-os-accent flex items-center justify-center"
                             aria-label={t('One more')}
                           >
                             <Plus size={18} />
@@ -807,8 +807,8 @@ export const PosBillingPage: React.FC = () => {
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => handleOpenItemDiscount(item)}
-                            className={`h-10 px-3.5 rounded-full text-sm font-semibold ring-1 ring-inset flex items-center gap-1 ${
-                              item.itemDiscount ? 'bg-status-greenBg text-status-green ring-status-greenBorder' : 'ring-os-line hover:ring-os-ink'
+                            className={`h-10 px-3.5 text-sm font-semibold ring-1 ring-inset flex items-center gap-1 ${
+                              item.itemDiscount ? 'bg-status-greenBg text-status-green ring-status-greenBorder' : 'ring-os-line hover:ring-os-accent'
                             }`}
                           >
                             <Percent size={15} />
@@ -816,7 +816,7 @@ export const PosBillingPage: React.FC = () => {
                           </button>
                           <button
                             onClick={() => handleRemoveItem(item.variant.id)}
-                            className="h-10 w-10 rounded-full flex items-center justify-center text-os-muted hover:text-status-red hover:bg-status-redBg"
+                            className="h-10 w-10 flex items-center justify-center text-os-muted hover:text-status-red hover:bg-status-redBg"
                             aria-label={t('Remove')}
                           >
                             <Trash2 size={18} />
@@ -958,7 +958,7 @@ export const PosBillingPage: React.FC = () => {
               <span className="font-bold">{formatINR(taxAmount)}</span>
             </div>
             {isEditingTax && (
-              <div className="flex items-center gap-2 p-2 border border-os-ink">
+              <div className="flex items-center gap-2 p-2 border border-os-accent">
                 <span className="text-sm shrink-0">{t('GST % for this bill')}</span>
                 <input
                   type="number"
@@ -971,7 +971,7 @@ export const PosBillingPage: React.FC = () => {
                   onKeyDown={(e) => e.key === 'Enter' && handleApplyCustomTax()}
                   className="field h-10 w-24"
                 />
-                <button type="button" onClick={handleApplyCustomTax} className="h-10 w-10 flex items-center justify-center bg-os-ink text-white" aria-label={t('Save')}>
+                <button type="button" onClick={handleApplyCustomTax} className="h-10 w-10 flex items-center justify-center bg-os-accent text-white" aria-label={t('Save')}>
                   <Check size={18} />
                 </button>
                 <button type="button" onClick={() => setIsEditingTax(false)} className="h-10 w-10 flex items-center justify-center border border-os-line" aria-label={t('Cancel')}>
@@ -987,7 +987,7 @@ export const PosBillingPage: React.FC = () => {
                 {formatINR(splitCgstSgst(taxAmount).cgst)} + {formatINR(splitCgstSgst(taxAmount).sgst)}
               </span>
             </div>
-            <div className="flex justify-between items-baseline pt-2 border-t-2 border-os-ink">
+            <div className="flex justify-between items-baseline pt-2 border-t-2 border-os-accent">
               <span className="text-lg font-bold">{t('Total to pay')}</span>
               <span className="text-3xl font-black">{formatINR(grandTotal)}</span>
             </div>
@@ -1091,7 +1091,7 @@ export const PosBillingPage: React.FC = () => {
                 type="button"
                 disabled={!canSettle}
                 onClick={() => void handleCompletePayment(true)}
-                className="w-full h-16 rounded-full bg-os-accent text-white text-lg font-semibold hover:bg-os-accent-dark disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                className="w-full h-16 bg-os-accent text-white text-lg font-semibold hover:bg-os-accent-dark disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-3"
               >
                 {isProcessingPayment ? (
                   <>
@@ -1109,7 +1109,7 @@ export const PosBillingPage: React.FC = () => {
                 type="button"
                 disabled={!canSettle}
                 onClick={() => void handleCompletePayment(false)}
-                className="w-full h-12 rounded-full ring-1 ring-inset ring-os-line hover:ring-os-ink text-base font-semibold disabled:opacity-30"
+                className="w-full h-12 ring-1 ring-inset ring-os-line hover:ring-os-accent text-base font-semibold disabled:opacity-30"
               >
                 {t('Save without printing')}
               </button>
@@ -1143,8 +1143,8 @@ export const PosBillingPage: React.FC = () => {
                         key={c || 'none'}
                         type="button"
                         onClick={() => setPickerColor(c)}
-                        className={`px-5 py-2 rounded-full ring-1 ring-inset text-left ${
-                          pickerColor === c ? 'bg-os-ink text-white ring-os-ink' : 'ring-os-line hover:ring-os-ink'
+                        className={`px-5 py-2 ring-1 ring-inset text-left ${
+                          pickerColor === c ? 'bg-os-accent text-white ring-os-accent' : 'ring-os-line hover:ring-os-accent'
                         } ${colourStock <= 0 ? 'opacity-50' : ''}`}
                       >
                         <div className="text-base font-semibold flex items-center gap-2">
@@ -1152,7 +1152,7 @@ export const PosBillingPage: React.FC = () => {
                             <img
                               src={activeVariantProduct.variants.find((v) => v.color === c)?.imageUrl}
                               alt=""
-                              className="w-9 h-11 object-cover rounded-sm -my-1 -ml-2"
+                              className="w-9 h-11 object-cover -my-1 -ml-2"
                             />
                           ) : (
                             <ColourDot hex={activeVariantProduct.variants.find((v) => v.color === c)?.colorHex} />
@@ -1181,7 +1181,7 @@ export const PosBillingPage: React.FC = () => {
                         type="button"
                         disabled={v.stock <= 0}
                         onClick={() => handleAddVariantToCart(activeVariantProduct, v)}
-                        className="p-3 bg-os-panel hover:bg-os-ink hover:text-white disabled:opacity-30 disabled:hover:bg-os-panel disabled:hover:text-os-ink flex flex-col items-center gap-1 transition-colors"
+                        className="p-3 bg-os-panel hover:bg-os-accent hover:text-white disabled:opacity-30 disabled:hover:bg-os-panel disabled:hover:text-os-ink flex flex-col items-center gap-1 transition-colors"
                       >
                         <span className="font-display text-[1.75rem] leading-none">{sizeText(v.size)}</span>
                         <span className="text-sm">{formatINR(v.price)}</span>

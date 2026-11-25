@@ -21,16 +21,16 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar, onOpenSearch })
   const canBill = !currentStaff || currentStaff.permissions.includes('BILLING');
   const onBilling = location.pathname.startsWith('/billing');
 
-  const round = 'h-11 w-11 rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-colors';
+  const round = 'h-11 w-11 flex items-center justify-center text-white hover:bg-white/10 transition-colors';
 
   return (
-    <header className="lg:hidden sticky top-0 z-30 bg-os-ink text-white no-print select-none">
+    <header className="lg:hidden sticky top-0 z-30 bg-os-accent text-white no-print select-none">
       <div className="h-16 flex items-center justify-between gap-2 px-2 sm:px-4">
         <div className="flex items-center gap-1 min-w-0">
           <button onClick={onToggleSidebar} className={round} aria-label={t('Menu')}>
             <Menu size={22} />
           </button>
-          <button onClick={() => navigate('/dashboard')} className="ml-1 shrink-0 rounded-sm" aria-label={t('Home')}>
+          <button onClick={() => navigate('/dashboard')} className="ml-1 shrink-0" aria-label={t('Home')}>
             <BrandLogo height={22} tone="white" />
           </button>
         </div>
@@ -42,7 +42,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleSidebar, onOpenSearch })
           {canBill && !onBilling && (
             <button
               onClick={() => navigate('/billing/new')}
-              className="h-10 rounded-full bg-os-highlight text-os-on-highlight px-4 flex items-center gap-2 text-[0.9375rem] font-semibold hover:opacity-90 transition-opacity"
+              className="h-10 bg-os-highlight text-os-on-highlight px-4 flex items-center gap-2 text-[0.9375rem] font-semibold hover:opacity-90 transition-opacity"
             >
               <PlusCircle size={18} />
               <span className="hidden sm:inline">{t('New bill')}</span>

@@ -4,8 +4,9 @@
 
 @layer base {
   /* Theme tokens (RGB channels, so Tailwind can add opacity: bg-os-ink/40).
-     Origin: pure black ink, white paper, flat grey panels. Only the accent
-     and the rail's highlight change between the two themes. */
+     Origin: two colours per theme, never mixed - black & white, or red &
+     white. The accent is every solid block (rail, buttons, chosen items,
+     page titles); text stays dark so it reads easily. */
   :root,
   :root[data-theme='mono'] {
     color-scheme: light;
@@ -16,18 +17,21 @@
     --os-soft: 232 232 232;
     --os-line: 217 217 217;
     --os-muted: 89 89 89;
-    /* Black & white: the accent is black, the rail's active item white. */
+    /* Black & white: black blocks, white on them. */
     --os-accent: 0 0 0;
     --os-accent-dark: 43 43 43;
+    /* The active item on the rail: white, with the rail's colour as text. */
     --os-highlight: 255 255 255;
     --os-on-highlight: 0 0 0;
+    --os-title: 0 0 0;
   }
-  /* Red & white: the brand red #FF0000. */
+  /* Red & white: the brand red #FF0000 in place of every black block. */
   :root[data-theme='red'] {
     --os-accent: 255 0 0;
     --os-accent-dark: 214 0 0;
-    --os-highlight: 255 0 0;
-    --os-on-highlight: 255 255 255;
+    --os-highlight: 255 255 255;
+    --os-on-highlight: 255 0 0;
+    --os-title: 255 0 0;
   }
 
   html {
@@ -73,8 +77,7 @@
     outline: 2px solid rgb(var(--os-accent));
     outline-offset: 2px;
   }
-  /* On the black rail a black ring would vanish - use the highlight there
-     (white in black & white, red in red & white). */
+  /* On the coloured rail a ring in the same colour would vanish - white there. */
   .os-rail :focus-visible {
     outline-color: rgb(var(--os-highlight));
   }
@@ -116,6 +119,7 @@
   /* The big condensed title at the top of every screen. */
   .page-title {
     @apply font-display text-[2.5rem] sm:text-[3.5rem] leading-[0.95];
+    color: rgb(var(--os-title));
   }
   /* Small label above a value or a field. */
   .label {
@@ -126,36 +130,36 @@
     @apply text-base font-bold text-os-ink;
   }
   .table-head {
-    @apply text-left text-[0.8125rem] font-semibold text-os-muted bg-transparent border-b-2 border-os-ink;
+    @apply text-left text-[0.8125rem] font-semibold text-os-muted bg-transparent border-b-2 border-os-accent;
   }
   /* A field: white, square, a grey line that turns black while typing. */
   .field {
-    @apply w-full bg-os-paper text-os-ink text-base px-3.5 py-2.5 border-2 border-os-line focus:border-os-ink focus:outline-none rounded-none;
+    @apply w-full bg-os-paper text-os-ink text-base px-3.5 py-2.5 border-2 border-os-line focus:border-os-accent focus:outline-none rounded-none;
   }
-  /* A filter or choice you tap: a pill; black when chosen. */
+  /* A filter or choice you tap: square, filled with the theme colour when chosen. */
   .chip {
-    @apply h-10 px-4 inline-flex items-center justify-center gap-1.5 rounded-full text-[0.9375rem] font-semibold whitespace-nowrap bg-os-paper text-os-ink ring-1 ring-inset ring-os-line transition-colors hover:ring-os-ink;
+    @apply h-10 px-4 inline-flex items-center justify-center gap-1.5 text-[0.9375rem] font-semibold whitespace-nowrap bg-os-paper text-os-ink ring-1 ring-inset ring-os-line transition-colors hover:ring-os-accent;
   }
   .chip-on {
-    @apply bg-os-ink text-white ring-os-ink hover:ring-os-ink;
+    @apply bg-os-accent text-white ring-os-accent hover:ring-os-accent;
   }
   /* Two or more choices side by side (tabs, preview kind). */
   .seg {
-    @apply inline-flex items-center gap-1 p-1 rounded-full bg-os-panel;
+    @apply inline-flex items-center gap-1 p-1 bg-os-panel;
   }
   .seg-item {
-    @apply h-9 px-4 rounded-full text-sm font-semibold text-os-muted whitespace-nowrap transition-colors hover:text-os-ink;
+    @apply h-9 px-4 text-sm font-semibold text-os-muted whitespace-nowrap transition-colors hover:text-os-ink;
   }
   .seg-item[aria-selected='true'] {
-    @apply bg-os-ink text-white hover:text-white;
+    @apply bg-os-accent text-white hover:text-white;
   }
   /* On / off switch (a checkbox underneath). */
   .os-switch {
-    @apply relative w-12 h-7 rounded-full bg-os-line cursor-pointer appearance-none transition-colors;
+    @apply relative w-12 h-7 bg-os-line cursor-pointer appearance-none transition-colors;
   }
   .os-switch::after {
     content: '';
-    @apply absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform shadow-subtle;
+    @apply absolute top-1 left-1 w-5 h-5 bg-white transition-transform shadow-subtle;
   }
   .os-switch:checked {
     @apply bg-os-accent;

@@ -66,7 +66,7 @@ export const BillDetailPage: React.FC = () => {
   };
 
   const row = (label: string, value: React.ReactNode, strong = false) => (
-    <div className={`flex justify-between gap-4 ${strong ? 'text-xl font-black border-t border-os-ink pt-2 mt-1' : 'text-base'}`}>
+    <div className={`flex justify-between gap-4 ${strong ? 'text-xl font-black border-t border-os-accent pt-2 mt-1' : 'text-base'}`}>
       <span className={strong ? '' : 'text-os-muted'}>{label}</span>
       <span className={strong ? '' : 'font-bold'}>{value}</span>
     </div>

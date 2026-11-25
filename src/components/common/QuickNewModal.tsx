@@ -104,7 +104,7 @@ export const QuickNewModal: React.FC<QuickNewModalProps> = ({ isOpen, onClose })
       type="button"
       onClick={onClick}
       className={`w-full text-left p-4 border flex items-center justify-between gap-3 transition-colors ${
-        primary ? 'bg-os-accent border-os-accent text-white hover:bg-os-accent-dark' : 'border-os-line hover:border-os-ink'
+        primary ? 'bg-os-accent border-os-accent text-white hover:bg-os-accent-dark' : 'border-os-line hover:border-os-accent'
       }`}
     >
       <span className="flex items-center gap-3">

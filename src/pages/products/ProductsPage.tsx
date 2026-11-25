@@ -38,7 +38,7 @@ export const ProductsPage: React.FC = () => {
     return matchesSearch && (category === 'ALL' || p.category === category);
   });
 
-  // A filter you tap: a pill, black when chosen (index.css .chip).
+  // A filter you tap, filled when chosen (index.css .chip).
   const pill = (active: boolean) => `chip ${active ? 'chip-on' : ''}`;
 
   return (

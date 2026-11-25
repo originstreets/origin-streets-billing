@@ -19,7 +19,7 @@ import { paymentWord } from '../utils/paymentWords';
 import { PermissionKey } from '../constants/permissions';
 import { productStockSummary } from '../utils/stock';
 
-// Home: the New bill pill first, today's numbers, then one panel per job.
+// Home: the big New bill block first, today's numbers, then one panel per job.
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { orders, products, settings, currentStaff } = useStore();
@@ -67,13 +67,13 @@ export const Dashboard: React.FC = () => {
       {can('BILLING') && (
         <button
           onClick={() => navigate('/billing/new')}
-          className="group w-full rounded-full bg-os-accent hover:bg-os-accent-dark text-white pl-8 pr-4 sm:pl-14 sm:pr-5 py-5 sm:py-6 flex items-center justify-between gap-4 text-left transition-colors"
+          className="group w-full bg-os-accent hover:bg-os-accent-dark text-white pl-8 pr-4 sm:pl-14 sm:pr-5 py-5 sm:py-6 flex items-center justify-between gap-4 text-left transition-colors"
         >
           <span className="min-w-0">
             <span className="block font-display text-[2.75rem] sm:text-[4.5rem] leading-[0.9]">{t('New bill')}</span>
             <span className="block text-base sm:text-lg text-white/80 mt-2">{t('Add items, take payment, print the bill.')}</span>
           </span>
-          <span className="h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-white text-os-accent flex items-center justify-center shrink-0 transition-transform group-hover:translate-x-1">
+          <span className="h-16 w-16 sm:h-24 sm:w-24 bg-white text-os-accent flex items-center justify-center shrink-0 transition-transform group-hover:translate-x-1">
             <ArrowRight size={34} />
           </span>
         </button>
@@ -107,14 +107,14 @@ export const Dashboard: React.FC = () => {
             <button
               key={tile.path}
               onClick={() => navigate(tile.path)}
-              className="group card p-5 sm:p-6 text-left hover:bg-os-ink hover:text-white transition-colors flex flex-col gap-6 min-h-[10.5rem]"
+              className="group card p-5 sm:p-6 text-left hover:bg-os-accent hover:text-white transition-colors flex flex-col gap-6 min-h-[10.5rem]"
             >
               <span className="text-os-ink group-hover:text-white transition-colors">{tile.icon}</span>
               <span className="mt-auto">
                 <span className="block text-lg sm:text-xl font-semibold leading-snug">{tile.title}</span>
                 <span className="block text-sm sm:text-[0.9375rem] text-os-muted group-hover:text-white/70 transition-colors mt-0.5">{tile.text}</span>
                 {tile.badge && (
-                  <span className="inline-block mt-3 px-2.5 py-0.5 rounded-full text-[0.8125rem] font-semibold bg-status-amberBg text-status-amber">
+                  <span className="inline-block mt-3 px-2.5 py-0.5 text-[0.8125rem] font-semibold bg-status-amberBg text-status-amber">
                     {tile.badge}
                   </span>
                 )}
@@ -129,7 +129,7 @@ export const Dashboard: React.FC = () => {
             <h2 className="font-display text-[1.75rem] sm:text-[2rem]">{t('Latest bills')}</h2>
             <button
               onClick={() => navigate('/bills')}
-              className="h-9 px-4 rounded-full text-[0.9375rem] font-semibold ring-1 ring-inset ring-os-line hover:ring-os-ink flex items-center gap-1.5"
+              className="h-9 px-4 text-[0.9375rem] font-semibold ring-1 ring-inset ring-os-line hover:ring-os-accent flex items-center gap-1.5"
             >
               {t('All bills')} <ArrowRight size={16} />
             </button>

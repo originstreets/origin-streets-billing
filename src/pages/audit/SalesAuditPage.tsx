@@ -117,7 +117,7 @@ export const SalesAuditPage: React.FC = () => {
   };
   const printRange: Record<Range, string> = { ALL: 'All time', TODAY: 'Today', WEEK: 'Last 7 days', MONTH: 'This month' };
 
-  // A filter you tap: a pill, black when chosen (index.css .chip).
+  // A filter you tap, filled when chosen (index.css .chip).
   const pill = (active: boolean) => `chip ${active ? 'chip-on' : ''}`;
 
   const line = (label: string, value: string, strong = false) => (
@@ -161,12 +161,12 @@ export const SalesAuditPage: React.FC = () => {
           </div>
         </div>
         <div className="w-full h-4 bg-os-soft flex overflow-hidden" aria-hidden="true">
-          <div style={{ width: `${shopPct}%` }} className="bg-os-ink" />
+          <div style={{ width: `${shopPct}%` }} className="bg-os-accent" />
           <div style={{ width: `${totalSales > 0 ? 100 - shopPct : 0}%` }} className="bg-status-blue" />
         </div>
         <div className="flex flex-wrap gap-x-6 gap-y-1 text-base">
           <span className="flex items-center gap-2">
-            <span className="w-3 h-3 bg-os-ink inline-block" /> {t('Shop')}: <b>{formatINR(shopTotal)}</b> ({shopPct}%)
+            <span className="w-3 h-3 bg-os-accent inline-block" /> {t('Shop')}: <b>{formatINR(shopTotal)}</b> ({shopPct}%)
           </span>
           <OnlineStoreSoon compact />
         </div>
@@ -256,7 +256,7 @@ export const SalesAuditPage: React.FC = () => {
             <button onClick={() => setChannelFilter('OFFLINE')} className={pill(channelFilter === 'OFFLINE')}>
               {t('Shop')} ({shopBills.length})
             </button>
-            <span className="h-10 px-4 inline-flex items-center gap-1.5 rounded-full text-[0.9375rem] border border-dashed border-os-line text-os-muted whitespace-nowrap">
+            <span className="h-10 px-4 inline-flex items-center gap-1.5 text-[0.9375rem] border border-dashed border-os-line text-os-muted whitespace-nowrap">
               <Globe size={16} /> {t('Online store')} · {t('Coming soon')}
             </span>
           </div>

@@ -254,7 +254,7 @@ export const PriceTagGeneratorPage: React.FC = () => {
                   type="button"
                   onClick={() => setTagFormat(f.id)}
                   className={`p-4 text-left border transition-colors ${
-                    tagFormat === f.id ? 'bg-os-ink text-white border-os-ink' : 'border-os-line hover:border-os-ink'
+                    tagFormat === f.id ? 'bg-os-accent text-white border-os-accent' : 'border-os-line hover:border-os-accent'
                   }`}
                 >
                   <div className="text-lg font-bold">{f.title}</div>
@@ -326,7 +326,7 @@ export const PriceTagGeneratorPage: React.FC = () => {
                           max={99}
                           value={v.printQty}
                           onChange={(e) => updateRow(v.id, 'printQty', Math.max(1, Number(e.target.value) || 1))}
-                          className="field h-10 px-2 w-20 font-bold border-os-ink"
+                          className="field h-10 px-2 w-20 font-bold border-os-accent"
                         />
                       </td>
                       <td className="py-2 px-3">

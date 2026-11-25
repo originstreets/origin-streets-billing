@@ -52,7 +52,7 @@ export const PhotoPicker: React.FC<{
   );
 
   if (compact) {
-    const round = 'h-9 w-9 rounded-full flex items-center justify-center bg-os-paper ring-1 ring-inset ring-os-line hover:ring-os-ink transition-colors';
+    const round = 'h-9 w-9 flex items-center justify-center bg-os-paper ring-1 ring-inset ring-os-line hover:ring-os-accent transition-colors';
     return (
       <div className="flex items-center gap-2">
         <div className="w-12 h-14 bg-os-soft overflow-hidden shrink-0 flex items-center justify-center text-os-muted">
@@ -231,7 +231,7 @@ const CameraModal: React.FC<{ onClose: () => void; onUse: (file: File) => void }
           {error}
         </div>
       ) : (
-        <div className="relative bg-os-ink aspect-[4/5] w-full overflow-hidden">
+        <div className="relative bg-os-accent aspect-[4/5] w-full overflow-hidden">
           <video
             ref={videoRef}
             playsInline

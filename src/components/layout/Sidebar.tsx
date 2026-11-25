@@ -95,19 +95,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
 
       <aside
         aria-hidden={!shown}
-        className={`os-rail fixed top-0 bottom-0 left-0 z-50 lg:z-30 w-[17rem] max-w-[86vw] bg-os-ink text-white flex flex-col transition-transform duration-200 ${
+        className={`os-rail fixed top-0 bottom-0 left-0 z-50 lg:z-30 w-[17rem] max-w-[86vw] bg-os-accent text-white flex flex-col transition-transform duration-200 ${
           shown ? 'translate-x-0' : '-translate-x-full invisible'
         } no-print select-none`}
       >
         <div className="px-6 pt-7 pb-6 flex items-start justify-between gap-3">
-          <NavLink to="/dashboard" onClick={closeOnPhone} className="block rounded-sm" aria-label={t('Home')}>
+          <NavLink to="/dashboard" onClick={closeOnPhone} className="block" aria-label={t('Home')}>
             <BrandLogo height={28} tone="white" />
             <span className="block mt-2 text-[0.8125rem] font-semibold text-white/55">{t('Billing')}</span>
           </NavLink>
           {!desktop && (
             <button
               onClick={onClose}
-              className="h-10 w-10 -mr-2 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10"
+              className="h-10 w-10 -mr-2 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10"
               aria-label={t('Close menu')}
             >
               <X size={22} />
@@ -120,7 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
             <NavLink
               to="/billing/new"
               onClick={closeOnPhone}
-              className="w-full h-12 rounded-full bg-os-highlight text-os-on-highlight px-5 flex items-center gap-2.5 text-base font-semibold hover:opacity-90 transition-opacity"
+              className="w-full h-12 bg-os-highlight text-os-on-highlight px-5 flex items-center gap-2.5 text-base font-semibold hover:opacity-90 transition-opacity"
             >
               <PlusCircle size={20} />
               <span>{t('New bill')}</span>
@@ -131,7 +131,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
               closeOnPhone();
               onOpenSearch();
             }}
-            className="w-full h-11 rounded-full ring-1 ring-inset ring-white/20 text-white/75 px-5 flex items-center gap-2.5 text-[0.9375rem] hover:ring-white/50 hover:text-white transition-colors"
+            className="w-full h-11 ring-1 ring-inset ring-white/20 text-white/75 px-5 flex items-center gap-2.5 text-[0.9375rem] hover:ring-white/50 hover:text-white transition-colors"
           >
             <Search size={18} />
             <span className="flex-1 text-left">{t('Search')}</span>
@@ -148,7 +148,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
                 to={item.path}
                 onClick={closeOnPhone}
                 aria-current={active ? 'page' : undefined}
-                className={`flex items-center gap-3 px-4 h-11 rounded-full text-[0.9375rem] transition-colors ${
+                className={`flex items-center gap-3 px-4 h-11 text-[0.9375rem] transition-colors ${
                   active ? 'bg-os-highlight text-os-on-highlight font-semibold' : 'text-white/70 hover:text-white hover:bg-white/10'
                 }`}
               >
@@ -173,7 +173,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
           <div className="flex items-center gap-1 -ml-2">
             <button
               onClick={() => store.reloadFromDatabase()}
-              className="h-9 px-3 rounded-full text-sm text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-1.5"
+              className="h-9 px-3 text-sm text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-1.5"
             >
               <RotateCcw size={15} />
               <span>{t('Refresh')}</span>
@@ -184,7 +184,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
                 // A full reload clears everything this login loaded before the next person signs in.
                 window.location.replace('/login');
               }}
-              className="h-9 px-3 rounded-full text-sm text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-1.5"
+              className="h-9 px-3 text-sm text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-1.5"
             >
               <LogOut size={15} />
               <span>{t('Sign out')}</span>

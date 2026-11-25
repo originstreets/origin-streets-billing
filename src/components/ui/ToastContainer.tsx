@@ -34,7 +34,7 @@ export const ToastContainer: React.FC = () => {
           key={toast.id}
           role="status"
           className={clsx(
-            'p-4 bg-os-ink text-white border-l-4 shadow-float flex items-start gap-3',
+            'p-4 bg-os-accent text-white border-l-4 shadow-float flex items-start gap-3',
             borders[toast.type || 'info']
           )}
         >
@@ -45,7 +45,7 @@ export const ToastContainer: React.FC = () => {
           </div>
           <button
             onClick={() => store.removeToast(toast.id)}
-            className="text-white/60 hover:text-white p-1 rounded-full"
+            className="text-white/60 hover:text-white p-1"
             aria-label={t('Close')}
           >
             <X size={18} />

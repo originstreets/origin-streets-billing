@@ -59,7 +59,7 @@ export const BillsPage: React.FC = () => {
     if (!ok) store.addToast(t('Could not open printing'), t('Try again, or open the bill and print from there.'), 'error');
   };
 
-  // A filter you tap: a pill, black when chosen (index.css .chip).
+  // A filter you tap, filled when chosen (index.css .chip).
   const pill = (active: boolean) => `chip ${active ? 'chip-on' : ''}`;
 
   const channelLabel: Record<Channel, string> = {
@@ -119,7 +119,7 @@ export const BillsPage: React.FC = () => {
                 {channelLabel[ch]}
               </button>
             ))}
-            <span className="h-10 px-4 inline-flex items-center gap-1.5 rounded-full text-[0.9375rem] border border-dashed border-os-line text-os-muted whitespace-nowrap">
+            <span className="h-10 px-4 inline-flex items-center gap-1.5 text-[0.9375rem] border border-dashed border-os-line text-os-muted whitespace-nowrap">
               <Globe size={16} /> {channelLabel.ONLINE} · {t('Coming soon')}
             </span>
           </div>

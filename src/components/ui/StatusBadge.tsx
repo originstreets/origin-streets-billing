@@ -19,7 +19,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className, sho
     <span
       className={twMerge(
         clsx(
-          'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[0.8125rem] font-semibold border whitespace-nowrap',
+          'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[0.8125rem] font-semibold border whitespace-nowrap',
           theme.bg,
           theme.text,
           theme.border,
@@ -27,7 +27,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className, sho
         )
       )}
     >
-      {showDot && <span className={clsx('w-2 h-2 rounded-full inline-block flex-shrink-0', theme.dot)} />}
+      {showDot && <span className={clsx('w-2 h-2 inline-block flex-shrink-0', theme.dot)} />}
       <span>{t(statusLabel(status))}</span>
     </span>
   );

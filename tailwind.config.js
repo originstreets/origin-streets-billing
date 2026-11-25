@@ -1,11 +1,10 @@
 /** @type {import('tailwindcss').Config} */
-// Origin look: black ink on white paper, flat grey panels, a black side rail.
+// Origin look: white paper, flat grey panels, a side rail in the theme colour.
 // Anybody (condensed, heavy) for titles and big numbers, Instrument Sans for
-// everything else (Telugu letters fall back to Noto Sans Telugu). Things you
-// press are pills; things that hold content are square. Two colour themes
-// share every screen - only the accent changes:
-//   mono  black & white   accent = black,   active item on the rail = white
-//   red   red & white     accent = #FF0000, active item on the rail = red
+// everything else (Telugu letters fall back to Noto Sans Telugu). Everything
+// is square. Two colour themes, never mixed - only the accent changes:
+//   mono  black & white   accent (rail, buttons, chosen items) = black
+//   red   red & white     accent (rail, buttons, chosen items) = #FF0000
 // The values live in CSS variables (src/index.css), switched by
 // <html data-theme="...">, so `bg-os-accent`, `text-os-ink/60` etc. follow
 // the theme everywhere.

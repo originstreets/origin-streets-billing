@@ -197,8 +197,8 @@ export const Select: React.FC<SelectProps> = ({
         onKeyDown={onButtonKey}
         className={twMerge(
           clsx(
-            'w-full h-12 flex items-center justify-between gap-2 bg-os-paper text-os-ink text-base px-3.5 border-2 border-os-line text-left transition-colors hover:border-os-ink focus:outline-none focus-visible:border-os-ink disabled:opacity-40 disabled:cursor-not-allowed',
-            open && 'border-os-ink',
+            'w-full h-12 flex items-center justify-between gap-2 bg-os-paper text-os-ink text-base px-3.5 border-2 border-os-line text-left transition-colors hover:border-os-accent focus:outline-none focus-visible:border-os-accent disabled:opacity-40 disabled:cursor-not-allowed',
+            open && 'border-os-accent',
             error && 'border-status-red',
             buttonClassName
           )
@@ -219,7 +219,7 @@ export const Select: React.FC<SelectProps> = ({
         createPortal(
           <div
             style={{ position: 'fixed', left: place.left, width: place.width, top: place.top, bottom: place.bottom, maxHeight: place.maxHeight }}
-            className="z-[70] bg-os-paper border-2 border-os-ink shadow-float flex flex-col"
+            className="z-[70] bg-os-paper border-2 border-os-accent shadow-float flex flex-col"
           >
             {showSearch && (
               <div className="p-2 border-b border-os-line relative">

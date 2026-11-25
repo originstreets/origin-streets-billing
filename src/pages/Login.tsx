@@ -38,7 +38,7 @@ export const Login: React.FC = () => {
     // Two halves: the black Origin panel with the full logo, and the sign-in
     // form on white. On a phone the black panel becomes a band on top.
     <div className="min-h-screen bg-os-page text-os-ink grid lg:grid-cols-2">
-      <section className="bg-os-ink text-white flex flex-col justify-center lg:justify-between px-6 py-10 sm:px-10 lg:p-14">
+      <section className="bg-os-accent text-white flex flex-col justify-center lg:justify-between px-6 py-10 sm:px-10 lg:p-14">
         <span className="hidden lg:block text-sm font-semibold text-white/55">{t('Shop billing')}</span>
         <div className="flex justify-center lg:justify-start">
           <BrandLogo kind="lockup" tone="white" height={140} className="lg:hidden" />

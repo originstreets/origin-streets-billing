@@ -164,7 +164,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
         role="dialog"
         aria-modal="true"
         aria-label={t('Search')}
-        className="w-full max-w-2xl bg-os-paper border border-os-ink shadow-modal flex flex-col overflow-hidden max-h-[85vh]"
+        className="w-full max-w-2xl bg-os-paper border border-os-accent shadow-modal flex flex-col overflow-hidden max-h-[85vh]"
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => {
           // Clicking inside the box keeps the cursor in the text box, so typing
@@ -223,7 +223,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                     if (!isSelected) setSelectedIndex(idx);
                   }}
                   className={`w-full text-left p-3 flex items-center justify-between gap-3 transition-colors ${
-                    isSelected ? 'bg-os-ink text-white' : 'text-os-ink'
+                    isSelected ? 'bg-os-accent text-white' : 'text-os-ink'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">

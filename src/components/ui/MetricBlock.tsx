@@ -33,7 +33,7 @@ export const MetricBlock: React.FC<MetricBlockProps> = ({ label, value, subValue
             {trend && (
               <span
                 className={clsx(
-                  'font-semibold px-2 py-0.5 rounded-full border',
+                  'font-semibold px-2 py-0.5 border',
                   trend.isPositive
                     ? 'bg-status-greenBg text-status-green border-status-greenBorder'
                     : 'bg-status-redBg text-status-red border-status-redBorder'

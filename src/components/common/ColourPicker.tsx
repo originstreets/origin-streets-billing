@@ -17,7 +17,7 @@ export const ColourDot: React.FC<{ hex?: string | null; size?: number; className
   return (
     <span
       aria-hidden="true"
-      className={clsx('inline-block rounded-full shrink-0', isLight(hex) && 'ring-1 ring-inset ring-black/20', className)}
+      className={clsx('inline-block shrink-0', isLight(hex) && 'ring-1 ring-inset ring-black/20', className)}
       style={{ width: size, height: size, backgroundColor: hex }}
     />
   );
@@ -148,10 +148,10 @@ export const ColourPicker: React.FC<{
             onPointerUp={() => (dragging.current = false)}
             onPointerCancel={() => (dragging.current = false)}
           >
-            <canvas ref={canvasRef} style={{ width: WHEEL, height: WHEEL }} className="rounded-full" aria-label={t('Colour wheel')} role="img" />
+            <canvas ref={canvasRef} style={{ width: WHEEL, height: WHEEL }} className="" aria-label={t('Colour wheel')} role="img" />
             <span
               aria-hidden="true"
-              className="absolute w-6 h-6 -ml-3 -mt-3 rounded-full ring-[3px] ring-white shadow-[0_0_0_1px_rgba(0,0,0,0.4)] pointer-events-none"
+              className="absolute w-6 h-6 -ml-3 -mt-3 ring-[3px] ring-white shadow-[0_0_0_1px_rgba(0,0,0,0.4)] pointer-events-none"
               style={{ left: marker.left, top: marker.top, backgroundColor: hex }}
             />
           </div>
@@ -175,7 +175,7 @@ export const ColourPicker: React.FC<{
         <div className="space-y-5 min-w-0">
           <div className="flex items-center gap-4">
             <span
-              className={clsx('w-20 h-20 rounded-full shrink-0', isLight(hex) && 'ring-1 ring-inset ring-black/15')}
+              className={clsx('w-20 h-20 shrink-0', isLight(hex) && 'ring-1 ring-inset ring-black/15')}
               style={{ backgroundColor: hex }}
               aria-hidden="true"
             />
@@ -229,9 +229,9 @@ export const ColourPicker: React.FC<{
                       setHexText(c.hex);
                     }}
                     className={clsx(
-                      'aspect-square rounded-full transition-transform hover:scale-110',
+                      'aspect-square transition-transform hover:scale-110',
                       isLight(c.hex) && 'ring-1 ring-inset ring-black/20',
-                      on && 'ring-2 ring-offset-2 ring-os-ink'
+                      on && 'ring-2 ring-offset-2 ring-os-accent'
                     )}
                     style={{ backgroundColor: c.hex }}
                   />

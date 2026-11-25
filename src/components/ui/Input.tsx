@@ -33,7 +33,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             className={twMerge(
               clsx(
-                'w-full h-12 bg-os-paper text-os-ink placeholder:text-[#8C8C8C] text-base px-3.5 border-2 border-os-line focus:border-os-ink focus:outline-none transition-colors rounded-none',
+                'w-full h-12 bg-os-paper text-os-ink placeholder:text-[#8C8C8C] text-base px-3.5 border-2 border-os-line focus:border-os-accent focus:outline-none transition-colors rounded-none',
                 prefix && 'pl-10',
                 suffix && 'pr-10',
                 error && 'border-status-red focus:border-status-red',
