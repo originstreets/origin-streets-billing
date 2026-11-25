@@ -18,7 +18,7 @@ export const LanguageSwitch: React.FC<{ className?: string; tone?: 'light' | 'da
     <div
       role="group"
       aria-label="Language / భాష"
-      className={clsx('h-11 p-1 flex shrink-0 gap-1', dark ? 'bg-white/10' : 'bg-os-panel', className)}
+      className={clsx('h-11 p-1 flex shrink-0 gap-1', dark ? 'ring-1 ring-inset ring-white' : 'bg-os-panel', className)}
     >
       {OPTIONS.map((o) => {
         const on = lang === o.value;
@@ -36,11 +36,11 @@ export const LanguageSwitch: React.FC<{ className?: string; tone?: 'light' | 'da
               o.value === 'te' ? 'text-[19px] pt-0.5' : 'text-base',
               on
                 ? dark
-                  ? 'bg-white text-black'
+                  ? 'bg-white text-os-accent'
                   : 'bg-os-accent text-white'
                 : dark
-                  ? 'text-white/70 hover:text-white hover:bg-white/10'
-                  : 'text-os-muted hover:text-os-ink hover:bg-os-soft'
+                  ? 'text-white hover:bg-white hover:text-os-accent'
+                  : 'text-os-accent hover:bg-os-paper'
             )}
           >
             {o.letter}

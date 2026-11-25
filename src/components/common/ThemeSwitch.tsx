@@ -7,8 +7,8 @@ import { useT } from '../../i18n';
 // white theme). The one in use sits in a filled square. tone 'dark' is for
 // the black rail. The choice is remembered on this device.
 const OPTIONS: { value: Theme; swatch: string; label: string }[] = [
-  { value: 'mono', swatch: 'bg-black ring-1 ring-white/60', label: 'Black & white' },
-  { value: 'red', swatch: 'bg-[#FF0000] ring-1 ring-white/60', label: 'Red & white' },
+  { value: 'mono', swatch: 'bg-black ring-1 ring-white', label: 'Black & white' },
+  { value: 'red', swatch: 'bg-[#FF0000] ring-1 ring-white', label: 'Red & white' },
 ];
 
 export const ThemeSwitch: React.FC<{ className?: string; tone?: 'light' | 'dark' }> = ({ className, tone = 'light' }) => {
@@ -20,7 +20,7 @@ export const ThemeSwitch: React.FC<{ className?: string; tone?: 'light' | 'dark'
     <div
       role="group"
       aria-label={t('Colour theme')}
-      className={clsx('h-11 p-1 flex shrink-0 gap-1', dark ? 'bg-white/10' : 'bg-os-panel', className)}
+      className={clsx('h-11 p-1 flex shrink-0 gap-1', dark ? 'ring-1 ring-inset ring-white' : 'bg-os-panel', className)}
     >
       {OPTIONS.map((o) => {
         const on = theme === o.value;
@@ -34,10 +34,10 @@ export const ThemeSwitch: React.FC<{ className?: string; tone?: 'light' | 'dark'
             title={t(o.label)}
             className={clsx(
               'h-9 w-9 flex items-center justify-center transition-colors',
-              on ? (dark ? 'bg-white' : 'bg-os-paper shadow-subtle') : dark ? 'hover:bg-white/10' : 'hover:bg-os-soft'
+              on ? (dark ? 'bg-white' : 'bg-os-paper shadow-subtle') : dark ? 'hover:bg-white' : 'hover:bg-os-paper'
             )}
           >
-            <span className={clsx('w-5 h-5', o.swatch, !on && 'opacity-70')} />
+            <span className={clsx('w-5 h-5', o.swatch)} />
           </button>
         );
       })}

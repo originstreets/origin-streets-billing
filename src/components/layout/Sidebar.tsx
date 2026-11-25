@@ -102,12 +102,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
         <div className="px-6 pt-7 pb-6 flex items-start justify-between gap-3">
           <NavLink to="/dashboard" onClick={closeOnPhone} className="block" aria-label={t('Home')}>
             <BrandLogo height={28} tone="white" />
-            <span className="block mt-2 text-[0.8125rem] font-semibold text-white/55">{t('Billing')}</span>
+            <span className="block mt-2 text-[0.8125rem] font-semibold text-white">{t('Billing')}</span>
           </NavLink>
           {!desktop && (
             <button
               onClick={onClose}
-              className="h-10 w-10 -mr-2 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10"
+              className="h-10 w-10 -mr-2 flex items-center justify-center text-white hover:bg-white hover:text-os-accent transition-colors"
               aria-label={t('Close menu')}
             >
               <X size={22} />
@@ -131,11 +131,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
               closeOnPhone();
               onOpenSearch();
             }}
-            className="w-full h-11 ring-1 ring-inset ring-white/20 text-white/75 px-5 flex items-center gap-2.5 text-[0.9375rem] hover:ring-white/50 hover:text-white transition-colors"
+            className="group w-full h-11 ring-1 ring-inset ring-white text-white px-5 flex items-center gap-2.5 text-[0.9375rem] hover:bg-white hover:text-os-accent transition-colors"
           >
             <Search size={18} />
             <span className="flex-1 text-left">{t('Search')}</span>
-            {desktop && <kbd className="text-xs font-sans text-white/45">Ctrl K</kbd>}
+            {desktop && <kbd className="px-1.5 py-0.5 text-xs font-sans font-semibold text-white ring-1 ring-inset ring-white group-hover:text-os-accent group-hover:ring-os-accent transition-colors">Ctrl K</kbd>}
           </button>
         </div>
 
@@ -149,7 +149,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
                 onClick={closeOnPhone}
                 aria-current={active ? 'page' : undefined}
                 className={`flex items-center gap-3 px-4 h-11 text-[0.9375rem] transition-colors ${
-                  active ? 'bg-os-highlight text-os-on-highlight font-semibold' : 'text-white/70 hover:text-white hover:bg-white/10'
+                  active
+                    ? 'bg-os-highlight text-os-on-highlight font-semibold shadow-[inset_5px_0_0_rgb(var(--os-accent))]'
+                    : `text-white font-medium hover:bg-white hover:text-os-accent`
                 }`}
               >
                 {item.icon}
@@ -159,11 +161,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
           })}
         </nav>
 
-        <div className="px-6 py-4 border-t border-white/10 space-y-3">
+        <div className="px-6 py-4 border-t border-white space-y-3">
           {currentStaff && (
             <div className="text-sm leading-tight">
               <div className="font-semibold text-white truncate">{currentStaff.name}</div>
-              <div className="text-white/55 mt-0.5">{t(roleWord(currentStaff.role))}</div>
+              <div className="text-white mt-0.5">{t(roleWord(currentStaff.role))}</div>
             </div>
           )}
           {/* On a computer these sit in the header above the page instead. */}
@@ -176,7 +178,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
           <div className="flex items-center gap-1 -ml-2">
             <button
               onClick={() => store.reloadFromDatabase()}
-              className="h-9 px-3 text-sm text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-1.5"
+              className="h-9 px-3 text-sm font-medium text-white hover:bg-white hover:text-os-accent transition-colors flex items-center gap-1.5"
             >
               <RotateCcw size={15} />
               <span>{t('Refresh')}</span>
@@ -187,7 +189,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
                 // A full reload clears everything this login loaded before the next person signs in.
                 window.location.replace('/login');
               }}
-              className="h-9 px-3 text-sm text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-1.5"
+              className="h-9 px-3 text-sm font-medium text-white hover:bg-white hover:text-os-accent transition-colors flex items-center gap-1.5"
             >
               <LogOut size={15} />
               <span>{t('Sign out')}</span>
