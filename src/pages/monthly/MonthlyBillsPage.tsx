@@ -11,6 +11,7 @@ import { Download, RefreshCw, Store, Globe } from 'lucide-react';
 import { useT } from '../../i18n';
 import { Link } from 'react-router-dom';
 import { OnlineStoreSoon } from '../../components/common/OnlineStoreSoon';
+import { usePaged } from '../../components/ui/Pagination';
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -90,6 +91,7 @@ export const MonthlyBillsPage: React.FC = () => {
   const offline = data ? totalsFor(data.offline) : null;
   const online = data ? totalsFor(data.online) : null;
   const register = data ? [...data.offline, ...data.online] : [];
+  const registerPage = usePaged(register, 15);
 
   return (
     <div className="space-y-5">
@@ -187,7 +189,7 @@ export const MonthlyBillsPage: React.FC = () => {
                     </td>
                   </tr>
                 ) : (
-                  register.map((inv) => (
+                  registerPage.rows.map((inv) => (
                     <tr key={`${inv.channel}-${inv.id}`}>
                       <td className="py-2.5 px-4 font-bold whitespace-nowrap">{inv.invoiceNumber}</td>
                       <td className="py-2.5 px-4 text-os-muted whitespace-nowrap">
@@ -216,6 +218,7 @@ export const MonthlyBillsPage: React.FC = () => {
               </tbody>
             </table>
           </div>
+          {registerPage.pager}
         </>
       )}
     </div>

@@ -7,6 +7,8 @@ import { QuickNewModal } from '../common/QuickNewModal';
 import { ToastContainer } from '../ui/ToastContainer';
 import { BackLink } from './BackLink';
 import { MadeBy } from '../common/MadeBy';
+import { ThemeSwitch } from '../common/ThemeSwitch';
+import { LanguageSwitch } from '../common/LanguageSwitch';
 
 export const AppLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -54,7 +56,13 @@ export const AppLayout: React.FC = () => {
           onOpenNew={() => setNewModalOpen(true)}
         />
 
-        <main className="flex-1 w-full max-w-[88rem] px-4 py-5 sm:px-6 sm:py-7 lg:px-10 lg:py-9">
+        {/* Computer: colour theme and language above the page, out of the rail. */}
+        <div className="hidden lg:flex items-center justify-end gap-2 w-full max-w-[88rem] px-10 pt-5 no-print">
+          <ThemeSwitch />
+          <LanguageSwitch />
+        </div>
+
+        <main className="flex-1 w-full max-w-[88rem] px-4 py-5 sm:px-6 sm:py-7 lg:px-10 lg:pt-2 lg:pb-9">
           <BackLink />
           <Outlet />
         </main>

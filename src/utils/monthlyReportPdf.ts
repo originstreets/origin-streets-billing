@@ -20,6 +20,10 @@ export interface InvoiceIdentity {
   terms: string;
   footer: string;
   signatory: string;
+  // The Origin logo (PNG data URL and its size), printed instead of the
+  // shop name when "Origin logo at the top" is on in Bill details.
+  logo?: { dataUrl: string; width: number; height: number };
+  invoiceTitle?: string;
 }
 
 // Origin palette (see tailwind config): ink, muted, light grey panels.
@@ -83,10 +87,17 @@ const tableTheme = {
 
 function drawBusinessHeader(doc: jsPDF, id: InvoiceIdentity, y: number): number {
   doc.setTextColor(...INK);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.text(id.brand, MARGIN, y);
-  y += 5;
+  if (id.logo) {
+    const h = 9;
+    const w = (id.logo.width / id.logo.height) * h;
+    doc.addImage(id.logo.dataUrl, 'PNG', MARGIN, y - 7, w, h);
+    y += 6;
+  } else {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text(id.brand, MARGIN, y);
+    y += 5;
+  }
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7.5);
   doc.setTextColor(...MUTED);
@@ -331,7 +342,7 @@ function drawInvoice(doc: jsPDF, inv: MonthlyInvoice, id: InvoiceIdentity) {
   doc.setTextColor(...PAPER);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
-  doc.text('TAX INVOICE', rightX - 20, 17.3, { align: 'center' });
+  doc.text(id.invoiceTitle || 'TAX INVOICE', rightX - 20, 17.3, { align: 'center' });
   doc.setTextColor(...INK);
   doc.setFontSize(12);
   doc.text(inv.invoiceNumber, rightX, 27, { align: 'right' });

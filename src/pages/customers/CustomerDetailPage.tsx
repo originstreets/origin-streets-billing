@@ -11,6 +11,7 @@ import { ArrowLeft, Mail, Phone, MapPin, Receipt, Pencil } from 'lucide-react';
 import { useT } from '../../i18n';
 import { methodWord } from '../../utils/paymentWords';
 import { variantLabel } from '../../utils/singleItem';
+import { Paged } from '../../components/ui/Pagination';
 
 export const CustomerDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -193,6 +194,9 @@ export const CustomerDetailPage: React.FC = () => {
         {customerOrders.length === 0 ? (
           <div className="p-8 text-center text-base text-os-muted">{t('No bills yet for this customer.')}</div>
         ) : (
+          <Paged items={customerOrders} size={10}>
+            {(rows, pager) => (
+          <>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-base">
               <thead>
@@ -204,7 +208,7 @@ export const CustomerDetailPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-os-line">
-                {customerOrders.map((ord) => (
+                {rows.map((ord) => (
                   <tr key={ord.id} onClick={() => navigate(`/bills/${ord.id}`)} className="hover:bg-os-soft cursor-pointer">
                     <td className="py-3 px-5 font-bold whitespace-nowrap">
                       {ord.orderNumber}
@@ -222,6 +226,10 @@ export const CustomerDetailPage: React.FC = () => {
               </tbody>
             </table>
           </div>
+          {pager}
+          </>
+            )}
+          </Paged>
         )}
       </div>
 

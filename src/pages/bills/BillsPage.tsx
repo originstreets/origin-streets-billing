@@ -9,6 +9,7 @@ import { useT } from '../../i18n';
 import { paymentWord } from '../../utils/paymentWords';
 import { printBill } from '../../utils/printBill';
 import { Order } from '../../types';
+import { usePaged } from '../../components/ui/Pagination';
 
 type Channel = 'ALL' | 'OFFLINE' | 'ONLINE';
 
@@ -51,6 +52,7 @@ export const BillsPage: React.FC = () => {
     });
   }, [orders, search, methodFilter, channelFilter]);
 
+  const billsPage = usePaged(filteredBills, 15);
   const totalBilled = orders.filter((o) => o.billStatus !== 'VOID').reduce((sum, o) => sum + o.grandTotal, 0);
 
   const handlePrint = async (bill: Order, e: React.MouseEvent) => {
@@ -161,7 +163,7 @@ export const BillsPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                filteredBills.map((b) => {
+                billsPage.rows.map((b) => {
                   const itemCount = b.items.reduce((sum, i) => sum + i.quantity, 0);
                   const isShop = b.channel === 'OFFLINE';
                   return (
@@ -221,6 +223,7 @@ export const BillsPage: React.FC = () => {
             </tbody>
           </table>
         </div>
+        {billsPage.pager}
       </div>
     </div>
   );

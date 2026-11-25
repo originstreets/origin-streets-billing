@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, Pencil, Plus, Trash2, Shirt, Layers } from '
 import { useT } from '../../i18n';
 import { formatINR } from '../../utils/formatters';
 import { Product } from '../../types';
+import { Paged } from '../../components/ui/Pagination';
 
 // Categories and the standard sizes of each (Shirts: 38, 40, 42, 44), on one
 // screen: the list of categories on the left, the one picked on the right
@@ -354,8 +355,11 @@ const CategoryDetail: React.FC<{ category: StoreCategory; products: Product[] }>
         {products.length === 0 ? (
           <p className="text-base text-os-muted">{t('No products in this category yet.')}</p>
         ) : (
+          <Paged items={products} size={8}>
+            {(rows, pager) => (
+          <>
           <div className="bg-os-paper divide-y divide-os-line">
-            {products.map((p) => (
+            {rows.map((p) => (
               <button
                 key={p.id}
                 type="button"
@@ -383,6 +387,10 @@ const CategoryDetail: React.FC<{ category: StoreCategory; products: Product[] }>
               </button>
             ))}
           </div>
+          {pager}
+          </>
+            )}
+          </Paged>
         )}
       </div>
 

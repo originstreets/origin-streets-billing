@@ -41,7 +41,7 @@ import { fetchInvoiceTemplate } from './shop';
 // tag and found again when scanned. Without a typed SKU it is made from the
 // row's id, so it never changes.
 export function variantCode(v: Pick<DbProductVariant, 'id' | 'sku'>): string {
-  return v.sku?.trim() || `OS-${v.id.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
+  return v.sku?.trim() || `ORS-${v.id.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
 }
 
 function mapVariant(v: DbProductVariant): ProductVariant {

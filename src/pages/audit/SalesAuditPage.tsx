@@ -9,6 +9,7 @@ import { OnlineStoreSoon } from '../../components/common/OnlineStoreSoon';
 import { paymentWord } from '../../utils/paymentWords';
 import { splitCgstSgst, formatRate } from '../../utils/tax';
 import { Order } from '../../types';
+import { usePaged } from '../../components/ui/Pagination';
 
 type Range = 'ALL' | 'TODAY' | 'WEEK' | 'MONTH';
 type Channel = 'ALL' | 'OFFLINE' | 'ONLINE';
@@ -129,6 +130,8 @@ export const SalesAuditPage: React.FC = () => {
 
   const shopPct = totalSales > 0 ? Math.round((shopTotal / totalSales) * 100) : 0;
   const walkIn = (name: string) => (name === 'Walk-in Customer' ? t('Walk-in customer') : name);
+
+  const listPage = usePaged(listed, 15);
 
   return (
     <div className="space-y-5">
@@ -295,7 +298,7 @@ export const SalesAuditPage: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                listed.map((o) => {
+                listPage.rows.map((o) => {
                   const isShop = o.channel === 'OFFLINE';
                   return (
                     <tr
@@ -334,6 +337,7 @@ export const SalesAuditPage: React.FC = () => {
             </tbody>
           </table>
         </div>
+        {listPage.pager}
       </div>
 
       {/* Printed sales report (English, for the records). */}

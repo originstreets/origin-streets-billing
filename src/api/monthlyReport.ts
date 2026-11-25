@@ -2,6 +2,25 @@ import { supabase } from '../lib/supabaseClient';
 import { fetchAllRows, fetchAllByIds } from './fetchAll';
 import { DbInvoiceTemplate, DbPosBill, DbPosBillItem, DbPosCustomer } from '../types/supabase';
 import { fetchInvoiceTemplate } from './shop';
+import { billTextFromShop } from './pos';
+
+// The black Origin wordmark as a PNG data URL, for the report's header.
+async function loadLogo(): Promise<{ dataUrl: string; width: number; height: number }> {
+  const blob = await (await fetch('/brand/origin-wordmark-black.png')).blob();
+  const dataUrl: string = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+  const size: { width: number; height: number } = await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
+  return { dataUrl, ...size };
+}
 import { variantLabel } from '../utils/singleItem';
 import { tr } from '../i18n';
 
@@ -248,9 +267,13 @@ export async function fetchInvoiceIdentity(): Promise<{
   terms: string;
   footer: string;
   signatory: string;
+  logo?: { dataUrl: string; width: number; height: number };
+  invoiceTitle?: string;
 }> {
   const tpl = await fetchInvoiceTemplate();
   const brand = tpl.company_name || 'Origin';
+  const text = billTextFromShop(tpl);
+  const logo = text.showLogo ? await loadLogo().catch(() => undefined) : undefined;
   return {
     brand,
     tagline: tpl.tagline || '',
@@ -263,5 +286,7 @@ export async function fetchInvoiceIdentity(): Promise<{
     terms: tpl.terms || '',
     footer: tpl.footer_note || '',
     signatory: brand,
+    logo,
+    invoiceTitle: text.invoiceTitle || undefined,
   };
 }

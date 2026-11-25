@@ -10,6 +10,7 @@ import { Tabs } from '../../components/ui/Tabs';
 import { formatINR } from '../../utils/formatters';
 import { Plus, Search, Phone, MapPin } from 'lucide-react';
 import { useT } from '../../i18n';
+import { usePaged } from '../../components/ui/Pagination';
 
 export const CustomersPage: React.FC = () => {
   const navigate = useNavigate();
@@ -79,6 +80,8 @@ export const CustomersPage: React.FC = () => {
     }
   };
 
+  const customersPage = usePaged(filteredCustomers, 15);
+
   return (
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -131,7 +134,7 @@ export const CustomersPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-os-line">
-                {filteredCustomers.map((cust) => (
+                {customersPage.rows.map((cust) => (
                   <tr
                     key={cust.id}
                     onClick={() => navigate(`/customers/${cust.id}`)}
@@ -169,6 +172,7 @@ export const CustomersPage: React.FC = () => {
             </table>
           </div>
         )}
+        {customersPage.pager}
       </div>
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={t('Add customer')}>

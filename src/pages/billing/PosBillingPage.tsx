@@ -30,6 +30,7 @@ import {
   Shirt,
   ArrowRight,
 } from 'lucide-react';
+import { usePaged } from '../../components/ui/Pagination';
 
 interface CartItem {
   product: Product;
@@ -526,6 +527,8 @@ export const PosBillingPage: React.FC = () => {
     </div>
   );
 
+  const productPage = usePaged(filteredProducts, 18);
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -573,7 +576,7 @@ export const PosBillingPage: React.FC = () => {
             <div className="card py-12 text-center text-base text-os-muted">{t('No products found.')}</div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 lg:max-h-[calc(100vh-210px)] overflow-y-auto pr-1">
-              {filteredProducts.map((prod) => {
+              {productPage.rows.map((prod) => {
                 const colors = productColors(prod);
                 const oneColourSizes = prod.variants.length > 1 && colors.length === 1 && !singleItemVariant(prod.variants);
                 return (
@@ -618,6 +621,7 @@ export const PosBillingPage: React.FC = () => {
               })}
             </div>
           )}
+          {productPage.pager}
         </div>
 
         {/* ---------------- the bill ---------------- */}

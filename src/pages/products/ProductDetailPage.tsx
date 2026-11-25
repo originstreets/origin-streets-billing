@@ -14,6 +14,7 @@ import { ColourDot } from '../../components/common/ColourPicker';
 import { PhotoPicker } from '../../components/common/PhotoPicker';
 import { variantStockStatus } from '../../utils/stock';
 import { ONE_SIZE } from '../../utils/singleItem';
+import { Paged } from '../../components/ui/Pagination';
 
 type AdjustReason = 'RESTOCK' | 'ADJUSTMENT' | 'DAMAGED';
 
@@ -297,6 +298,9 @@ export const ProductDetailPage: React.FC = () => {
         {productLogs.length === 0 ? (
           <div className="p-6 text-base text-os-muted">{t('No stock changes yet.')}</div>
         ) : (
+          <Paged items={productLogs} size={10}>
+            {(rows, pager) => (
+          <>
           <div className="overflow-x-auto">
             <table className="w-full text-base border-collapse">
               <thead>
@@ -309,7 +313,7 @@ export const ProductDetailPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-os-line">
-                {productLogs.slice(0, 10).map((log) => (
+                {rows.map((log) => (
                   <tr key={log.id}>
                     <td className="py-2.5 px-5 text-os-muted whitespace-nowrap">{log.date.substring(0, 16)}</td>
                     <td className="py-2.5 px-4">{codeByVariant.get(log.variantSku) || '—'}</td>
@@ -323,6 +327,10 @@ export const ProductDetailPage: React.FC = () => {
               </tbody>
             </table>
           </div>
+          {pager}
+          </>
+            )}
+          </Paged>
         )}
       </div>
 

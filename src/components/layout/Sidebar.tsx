@@ -159,17 +159,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onOpenSearch 
           })}
         </nav>
 
-        <div className="px-6 py-5 border-t border-white/10 space-y-4">
+        <div className="px-6 py-4 border-t border-white/10 space-y-3">
           {currentStaff && (
             <div className="text-sm leading-tight">
               <div className="font-semibold text-white truncate">{currentStaff.name}</div>
               <div className="text-white/55 mt-0.5">{t(roleWord(currentStaff.role))}</div>
             </div>
           )}
-          <div className="flex items-center justify-between gap-2">
-            <ThemeSwitch tone="dark" />
-            <LanguageSwitch tone="dark" />
-          </div>
+          {/* On a computer these sit in the header above the page instead. */}
+          {!desktop && (
+            <div className="flex items-center justify-between gap-2">
+              <ThemeSwitch tone="dark" />
+              <LanguageSwitch tone="dark" />
+            </div>
+          )}
           <div className="flex items-center gap-1 -ml-2">
             <button
               onClick={() => store.reloadFromDatabase()}

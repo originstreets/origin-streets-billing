@@ -8,6 +8,7 @@ import { formatINR } from '../../utils/formatters';
 import { Plus, Search, Tag, Shirt, Ruler } from 'lucide-react';
 import { useT } from '../../i18n';
 import { productStockSummary } from '../../utils/stock';
+import { usePaged } from '../../components/ui/Pagination';
 
 export const ProductsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -40,6 +41,8 @@ export const ProductsPage: React.FC = () => {
 
   // A filter you tap, filled when chosen (index.css .chip).
   const pill = (active: boolean) => `chip ${active ? 'chip-on' : ''}`;
+
+  const productsPage = usePaged(filtered, 12);
 
   return (
     <div className="space-y-5">
@@ -113,7 +116,7 @@ export const ProductsPage: React.FC = () => {
         <div className="card p-10 text-center text-base text-os-muted">{t('No products found.')}</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((prod) => {
+          {productsPage.rows.map((prod) => {
             const stock = productStockSummary(prod, settings.lowStockThreshold);
             return (
               <div key={prod.id} className="card flex flex-col">
@@ -156,6 +159,7 @@ export const ProductsPage: React.FC = () => {
           })}
         </div>
       )}
+      {productsPage.pager}
     </div>
   );
 };
