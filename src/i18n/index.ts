@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { te } from './te';
+import { pageSwap, writeInLines } from '../utils/pageSwap';
 
 // English / Telugu switch for every billing screen. The English sentence is
 // its own key: tr('New bill') shows "New bill" in English and the Telugu
@@ -33,8 +34,7 @@ export function getLang(): Lang {
   return lang;
 }
 
-export function setLang(next: Lang) {
-  if (next === lang) return;
+function commitLang(next: Lang) {
   lang = next;
   try {
     localStorage.setItem(STORAGE_KEY, next);
@@ -43,6 +43,17 @@ export function setLang(next: Lang) {
   }
   applyDocumentLang();
   listeners.forEach((l) => l());
+}
+
+// Switching language: the new words are written in line by line across the
+// screen (see utils/pageSwap). animate=false switches at once.
+export function setLang(next: Lang, animate = true) {
+  if (next === lang) return;
+  if (!animate) {
+    commitLang(next);
+    return;
+  }
+  pageSwap(() => commitLang(next), writeInLines(), { duration: 620 });
 }
 
 function subscribe(listener: () => void) {

@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Theme switch reveal (see src/theme): the new colours are drawn over the old
-   ones by a clip that grows from the tapped swatch; no fade, no blending. */
-.theme-swap::view-transition-old(root),
-.theme-swap::view-transition-new(root) {
+/* Theme and language switch (see utils/pageSwap): the new screen is drawn
+   over the old one through a growing clip; no fade, no blending. */
+.page-swap::view-transition-old(root),
+.page-swap::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
