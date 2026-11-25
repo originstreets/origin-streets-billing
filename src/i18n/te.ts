@@ -652,7 +652,7 @@ export const te: Record<string, string> = {
   'Use this photo': 'ఈ ఫోటో వాడు',
   'Words under the QR code': 'QR కోడ్ కింద మాటలు',
 
-  // Origin: categories & sizes, adding products, shop details, colour theme, online store.
+  // Bill details, camera, colour wheel and colour photos, Categories & sizes.
   'A photo for each colour is optional. It shows when that colour is picked.': 'ప్రతి కలర్‌కి ఫోటో ఇష్టమైతే పెట్టండి. ఆ కలర్ ఎంచుకున్నప్పుడు కనిపిస్తుంది.',
   'Add a category on the left to start.': 'మొదలుపెట్టడానికి ఎడమ వైపు కేటగిరీ జోడించండి.',
   'Add colour': 'కలర్ జోడించు',
@@ -682,4 +682,21 @@ export const te: Record<string, string> = {
   '{p} products': '{p} ప్రొడక్ట్స్',
   '{s} sizes': '{s} సైజులు',
   '{s} sizes · {p} products': '{s} సైజులు · {p} ప్రొడక్ట్స్',
+
+  // Pages, VIP setting, month or custom dates on Check sales and the GST report.
+  'A customer whose bills add up to more than this is shown as VIP.': 'బిల్స్ మొత్తం దీనికంటే ఎక్కువ ఉన్న కస్టమర్ VIP గా చూపిస్తారు.',
+  'Below that: "Bought before" after their first bill, "New" before it.': 'దానికంటే తక్కువ: మొదటి బిల్ తర్వాత "ఇంతకు ముందు కొన్నారు", అంతకు ముందు "కొత్త".',
+  'Custom dates': 'కావాల్సిన తేదీలు',
+  'From': 'నుంచి',
+  'Next': 'తర్వాత',
+  'Pages': 'పేజీలు',
+  'Pick a colour from the screen': 'స్క్రీన్ నుంచి కలర్ ఎంచుకో',
+  'Pick a month': 'నెల ఎంచుకో',
+  'Previous': 'ముందు',
+  'Report for': 'రిపోర్ట్',
+  'Spent over {amount}': '{amount} కంటే ఎక్కువ ఖర్చు చేశారు',
+  'The amount must be 0 or more.': 'మొత్తం 0 లేదా అంతకంటే ఎక్కువ ఉండాలి.',
+  'To': 'వరకు',
+  'VIP after spending (₹)': 'ఇంత ఖర్చు చేశాక VIP (₹)',
+  '{a}–{b} of {n}': '{n} లో {a}–{b}',
 };

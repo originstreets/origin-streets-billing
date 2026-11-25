@@ -9,12 +9,14 @@ import { Input } from '../../components/ui/Input';
 import { Tabs } from '../../components/ui/Tabs';
 import { formatINR } from '../../utils/formatters';
 import { Plus, Search, Phone, MapPin } from 'lucide-react';
+import { customerSegment } from '../../utils/customerSegment';
 import { useT } from '../../i18n';
 import { usePaged } from '../../components/ui/Pagination';
 
 export const CustomersPage: React.FC = () => {
   const navigate = useNavigate();
-  const { customers, currentStaff } = useStore();
+  const { customers, currentStaff, settings } = useStore();
+  const segmentOf = (c: { totalSpend: number; ordersCount: number }) => customerSegment(c, settings.vipSpendThreshold);
   const t = useT();
   const canBill = !currentStaff || currentStaff.permissions.includes('BILLING');
   const [search, setSearch] = useState('');
@@ -29,13 +31,13 @@ export const CustomersPage: React.FC = () => {
 
   const totalSpend = customers.reduce((sum, c) => sum + c.totalSpend, 0);
   const avgSpend = customers.length ? Math.round(totalSpend / customers.length) : 0;
-  const vipCount = customers.filter((c) => c.segment === 'VIP').length;
+  const vipCount = customers.filter((c) => segmentOf(c) === 'VIP').length;
 
   const filterTabs = [
     { id: 'ALL', label: t('All'), count: customers.length },
     { id: 'VIP', label: t('VIP'), count: vipCount },
-    { id: 'ACTIVE', label: t('Bought before'), count: customers.filter((c) => c.segment === 'ACTIVE').length },
-    { id: 'NEW', label: t('New'), count: customers.filter((c) => c.segment === 'NEW').length },
+    { id: 'ACTIVE', label: t('Bought before'), count: customers.filter((c) => segmentOf(c) === 'ACTIVE').length },
+    { id: 'NEW', label: t('New'), count: customers.filter((c) => segmentOf(c) === 'NEW').length },
   ];
 
   const q = search.trim().toLowerCase();
@@ -46,7 +48,7 @@ export const CustomersPage: React.FC = () => {
       c.email.toLowerCase().includes(q) ||
       c.phone.includes(q) ||
       c.city.toLowerCase().includes(q);
-    return matchesSearch && (activeTab === 'ALL' || c.segment === activeTab);
+    return matchesSearch && (activeTab === 'ALL' || segmentOf(c) === activeTab);
   });
 
   const handleCreateCustomer = async (e: React.FormEvent) => {
@@ -96,7 +98,7 @@ export const CustomersPage: React.FC = () => {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricBlock label={t('Customers')} value={customers.length} />
-        <MetricBlock label={t('VIP')} value={vipCount} subtext={t('Spent over ₹40,000')} />
+        <MetricBlock label={t('VIP')} value={vipCount} subtext={t('Spent over {amount}', { amount: formatINR(settings.vipSpendThreshold) })} />
         <MetricBlock label={t('Total spent')} value={formatINR(totalSpend)} />
         <MetricBlock label={t('Average per customer')} value={formatINR(avgSpend)} />
       </div>
@@ -155,7 +157,7 @@ export const CustomersPage: React.FC = () => {
                       )}
                     </td>
                     <td className="py-3 px-4">
-                      <StatusBadge status={cust.segment} />
+                      <StatusBadge status={segmentOf(cust)} />
                     </td>
                     <td className="py-3 px-4 text-center font-bold">{cust.ordersCount}</td>
                     <td className="py-3 px-4 text-right font-bold whitespace-nowrap">{formatINR(cust.totalSpend)}</td>

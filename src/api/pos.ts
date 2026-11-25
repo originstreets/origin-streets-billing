@@ -795,6 +795,7 @@ export function settingsFromShop(tpl: DbInvoiceTemplate, pos: DbPosSettings | nu
     shippingFlatRate: pos?.shipping_flat_rate || 0,
     freeShippingThreshold: pos?.free_shipping_threshold || 0,
     lowStockThreshold: pos?.low_stock_threshold ?? 5,
+    vipSpendThreshold: Number(pos?.vip_spend_threshold ?? 40000),
     printer: {
       name: pos?.printer_name || '',
       status: pos?.last_test_print ? 'ONLINE' : 'OFFLINE',
@@ -823,6 +824,7 @@ export async function saveSettings(updates: {
   invoicePrefix?: string;
   printerName?: string;
   printerConnection?: 'WIFI' | 'USB' | 'ETHERNET';
+  vipSpendThreshold?: number;
   lowStockThreshold?: number;
 }): Promise<void> {
   const { data: existing } = await supabase.from('pos_settings').select('id').limit(1).maybeSingle();
@@ -837,6 +839,7 @@ export async function saveSettings(updates: {
     invoice_prefix: updates.invoicePrefix,
     printer_name: updates.printerName,
     printer_connection: updates.printerConnection,
+    vip_spend_threshold: updates.vipSpendThreshold,
     low_stock_threshold: updates.lowStockThreshold,
   };
   Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);

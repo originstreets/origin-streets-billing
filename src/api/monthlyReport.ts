@@ -194,8 +194,19 @@ async function fetchOfflineBills(from: string, to: string, storeState: string): 
   });
 }
 
+// From the start of one day to the end of another, in IST ('YYYY-MM-DD').
+export function dayRangeIst(fromDate: string, toDate: string): { from: string; to: string } {
+  const end = new Date(`${toDate}T00:00:00+05:30`);
+  end.setUTCDate(end.getUTCDate() + 1);
+  return { from: new Date(`${fromDate}T00:00:00+05:30`).toISOString(), to: end.toISOString() };
+}
+
 export async function fetchMonthlyData(year: number, month: number): Promise<MonthlyData> {
-  const { from, to } = monthRangeIst(year, month);
+  return fetchReportData(monthRangeIst(year, month));
+}
+
+// Every shop bill between two moments (a month, or any dates picked).
+export async function fetchReportData({ from, to }: { from: string; to: string }): Promise<MonthlyData> {
   const tpl = await fetchInvoiceTemplate();
   const storeState = requireStoreState(tpl);
   const bills = await fetchOfflineBills(from, to, storeState);

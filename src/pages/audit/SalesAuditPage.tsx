@@ -11,7 +11,7 @@ import { splitCgstSgst, formatRate } from '../../utils/tax';
 import { Order } from '../../types';
 import { usePaged } from '../../components/ui/Pagination';
 
-type Range = 'ALL' | 'TODAY' | 'WEEK' | 'MONTH';
+type Range = 'ALL' | 'TODAY' | 'WEEK' | 'MONTH' | 'PICK_MONTH' | 'CUSTOM';
 type Channel = 'ALL' | 'OFFLINE' | 'ONLINE';
 
 // Money in one payment method on a shop bill (from its real payment rows).
@@ -34,6 +34,10 @@ export const SalesAuditPage: React.FC = () => {
   const [channelFilter, setChannelFilter] = useState<Channel>('ALL');
   const [search, setSearch] = useState('');
   const [timeRange, setTimeRange] = useState<Range>('ALL');
+  // 'Pick a month' (YYYY-MM) and 'Custom dates' (from - to, both days included).
+  const [pickMonth, setPickMonth] = useState(() => istToday().slice(0, 7));
+  const [fromDate, setFromDate] = useState(() => `${istToday().slice(0, 8)}01`);
+  const [toDate, setToDate] = useState(() => istToday());
 
   const todayStr = istToday();
 
@@ -46,9 +50,14 @@ export const SalesAuditPage: React.FC = () => {
         return o.createdAt >= toIstDateTime(weekAgo);
       }
       if (timeRange === 'MONTH') return o.createdAt.startsWith(todayStr.substring(0, 7));
+      if (timeRange === 'PICK_MONTH') return o.createdAt.startsWith(pickMonth);
+      if (timeRange === 'CUSTOM') {
+        const day = o.createdAt.substring(0, 10);
+        return (!fromDate || day >= fromDate) && (!toDate || day <= toDate);
+      }
       return true;
     });
-  }, [orders, timeRange, todayStr]);
+  }, [orders, timeRange, todayStr, pickMonth, fromDate, toDate]);
 
   const shopBills = useMemo(() => timeFilteredOrders.filter((o) => o.channel === 'OFFLINE'), [timeFilteredOrders]);
   // Cancelled bills are listed but never counted as sales.
@@ -115,8 +124,19 @@ export const SalesAuditPage: React.FC = () => {
     TODAY: t('Today'),
     WEEK: t('Last 7 days'),
     MONTH: t('This month'),
+    PICK_MONTH: t('Pick a month'),
+    CUSTOM: t('Custom dates'),
   };
-  const printRange: Record<Range, string> = { ALL: 'All time', TODAY: 'Today', WEEK: 'Last 7 days', MONTH: 'This month' };
+  const monthName = (ym: string) =>
+    new Date(`${ym}-01T00:00:00+05:30`).toLocaleDateString('en-IN', { month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' });
+  const printRange: Record<Range, string> = {
+    ALL: 'All time',
+    TODAY: 'Today',
+    WEEK: 'Last 7 days',
+    MONTH: 'This month',
+    PICK_MONTH: monthName(pickMonth),
+    CUSTOM: `${fromDate || '…'} to ${toDate || '…'}`,
+  };
 
   // A filter you tap, filled when chosen (index.css .chip).
   const pill = (active: boolean) => `chip ${active ? 'chip-on' : ''}`;
@@ -146,12 +166,33 @@ export const SalesAuditPage: React.FC = () => {
       </div>
 
       <div className="flex flex-wrap gap-2 no-print">
-        {(['ALL', 'TODAY', 'WEEK', 'MONTH'] as const).map((r) => (
+        {(['ALL', 'TODAY', 'WEEK', 'MONTH', 'PICK_MONTH', 'CUSTOM'] as const).map((r) => (
           <button key={r} onClick={() => setTimeRange(r)} className={pill(timeRange === r)}>
             {rangeLabel[r]}
           </button>
         ))}
       </div>
+      {(timeRange === 'PICK_MONTH' || timeRange === 'CUSTOM') && (
+        <div className="flex flex-wrap items-end gap-3 no-print">
+          {timeRange === 'PICK_MONTH' ? (
+            <label className="flex flex-col gap-1.5">
+              <span className="label">{t('Month')}</span>
+              <input type="month" className="field h-11" value={pickMonth} max={todayStr.slice(0, 7)} onChange={(e) => setPickMonth(e.target.value)} />
+            </label>
+          ) : (
+            <>
+              <label className="flex flex-col gap-1.5">
+                <span className="label">{t('From')}</span>
+                <input type="date" className="field h-11" value={fromDate} max={toDate || undefined} onChange={(e) => setFromDate(e.target.value)} />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="label">{t('To')}</span>
+                <input type="date" className="field h-11" value={toDate} min={fromDate || undefined} max={todayStr} onChange={(e) => setToDate(e.target.value)} />
+              </label>
+            </>
+          )}
+        </div>
+      )}
 
       <div className="card p-5 space-y-3 no-print">
         <div className="flex flex-wrap items-baseline justify-between gap-2">

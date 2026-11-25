@@ -90,6 +90,7 @@ let currentState: CommerceState = {
     shippingFlatRate: 0,
     freeShippingThreshold: 0,
     lowStockThreshold: 5,
+    vipSpendThreshold: 40000,
     printer: { name: '', status: 'OFFLINE', connection: 'USB' },
   },
   toasts: [],
@@ -622,6 +623,7 @@ export const store = {
       invoicePrefix: updates.invoicePrefix,
       printerName: updates.printer?.name,
       printerConnection: updates.printer?.connection,
+      vipSpendThreshold: updates.vipSpendThreshold,
     });
     const settings = await posApi.fetchSettings();
     saveState({

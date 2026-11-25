@@ -8,6 +8,7 @@ import { MetricBlock } from '../../components/ui/MetricBlock';
 import { Input } from '../../components/ui/Input';
 import { formatINR } from '../../utils/formatters';
 import { ArrowLeft, Mail, Phone, MapPin, Receipt, Pencil } from 'lucide-react';
+import { customerSegment } from '../../utils/customerSegment';
 import { useT } from '../../i18n';
 import { methodWord } from '../../utils/paymentWords';
 import { variantLabel } from '../../utils/singleItem';
@@ -16,7 +17,7 @@ import { Paged } from '../../components/ui/Pagination';
 export const CustomerDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { customers, orders, returns, currentStaff } = useStore();
+  const { customers, orders, returns, currentStaff, settings } = useStore();
   const t = useT();
   const canBill = !currentStaff || currentStaff.permissions.includes('BILLING');
 
@@ -142,7 +143,7 @@ export const CustomerDetailPage: React.FC = () => {
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="page-title">{customer.name}</h1>
-              <StatusBadge status={customer.segment} />
+              <StatusBadge status={customerSegment(customer, settings.vipSpendThreshold)} />
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-base">
               <span className="flex items-center gap-2">

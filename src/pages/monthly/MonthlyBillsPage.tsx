@@ -5,7 +5,7 @@ import { Select } from '../../components/ui/Select';
 import { MetricBlock } from '../../components/ui/MetricBlock';
 import { formatINR } from '../../utils/formatters';
 import { formatRate } from '../../utils/tax';
-import { fetchMonthlyData, fetchInvoiceIdentity, totalsFor, MonthlyData, STORE_STATE_MISSING } from '../../api/monthlyReport';
+import { fetchMonthlyData, fetchReportData, dayRangeIst, fetchInvoiceIdentity, totalsFor, MonthlyData, STORE_STATE_MISSING } from '../../api/monthlyReport';
 import { buildMonthlyReportPdf } from '../../utils/monthlyReportPdf';
 import { Download, RefreshCw, Store, Globe } from 'lucide-react';
 import { useT } from '../../i18n';
@@ -36,19 +36,28 @@ export const MonthlyBillsPage: React.FC = () => {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [missingState, setMissingState] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  // A whole month, or any dates picked (from - to, both days included).
+  const [mode, setMode] = useState<'MONTH' | 'RANGE'>('MONTH');
+  const todayIst = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+  const [fromDate, setFromDate] = useState(`${todayIst.slice(0, 8)}01`);
+  const [toDate, setToDate] = useState(todayIst);
+  const rangeOk = !!fromDate && !!toDate && fromDate <= toDate;
 
   const years = Array.from({ length: 5 }, (_, i) => current.year - i);
-  const isFuture = year > current.year || (year === current.year && month > current.month);
+  const isFuture = mode === 'MONTH' && (year > current.year || (year === current.year && month > current.month));
+  const shortDate = (d: string) =>
+    new Date(`${d}T00:00:00+05:30`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
   // The PDF itself is in English (GST records); the screen follows the language switch.
-  const pdfMonthLabel = `${MONTHS[month - 1]} ${year}`;
-  const monthLabel = `${t(MONTHS[month - 1])} ${year}`;
+  const pdfMonthLabel = mode === 'MONTH' ? `${MONTHS[month - 1]} ${year}` : `${shortDate(fromDate)} - ${shortDate(toDate)}`;
+  const monthLabel = mode === 'MONTH' ? `${t(MONTHS[month - 1])} ${year}` : `${shortDate(fromDate)} - ${shortDate(toDate)}`;
+  const fetchChosen = () => (mode === 'MONTH' ? fetchMonthlyData(year, month) : fetchReportData(dayRangeIst(fromDate, toDate)));
 
   const load = async () => {
     setIsLoading(true);
     setLoadError(null);
     setMissingState(false);
     try {
-      setData(await fetchMonthlyData(year, month));
+      setData(await fetchChosen());
     } catch (err) {
       setData(null);
       setMissingState(err instanceof Error && err.name === STORE_STATE_MISSING);
@@ -59,23 +68,27 @@ export const MonthlyBillsPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isFuture) {
+    if (isFuture || (mode === 'RANGE' && !rangeOk)) {
       setData(null);
       return;
     }
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [year, month]);
+  }, [year, month, mode, fromDate, toDate]);
 
   const handleDownload = async () => {
     if (!data) return;
     setIsGenerating(true);
     try {
       // Re-fetch so the PDF matches the database at the moment of download.
-      const [fresh, identity] = await Promise.all([fetchMonthlyData(year, month), fetchInvoiceIdentity()]);
+      const [fresh, identity] = await Promise.all([fetchChosen(), fetchInvoiceIdentity()]);
       setData(fresh);
       const doc = buildMonthlyReportPdf(fresh, identity, pdfMonthLabel);
-      doc.save(`Origin_GST_Report_${year}-${String(month).padStart(2, '0')}.pdf`);
+      doc.save(
+        mode === 'MONTH'
+          ? `Origin_GST_Report_${year}-${String(month).padStart(2, '0')}.pdf`
+          : `Origin_GST_Report_${fromDate}_to_${toDate}.pdf`
+      );
       store.addToast(
         t('PDF downloaded'),
         t('{n} shop bills', { n: fresh.offline.length }),
@@ -103,6 +116,36 @@ export const MonthlyBillsPage: React.FC = () => {
       </div>
 
       <div className="card p-4 flex flex-col sm:flex-row sm:items-end gap-4">
+        <div className="w-full sm:w-auto">
+          <span className="label mb-1.5">{t('Report for')}</span>
+          <div role="tablist" className="inline-flex p-1 gap-1 bg-os-panel">
+            {(['MONTH', 'RANGE'] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                role="tab"
+                aria-selected={mode === m}
+                onClick={() => setMode(m)}
+                className={`h-9 px-4 text-sm font-semibold whitespace-nowrap ${mode === m ? 'bg-os-accent text-white' : 'text-os-muted hover:text-os-ink'}`}
+              >
+                {m === 'MONTH' ? t('Month') : t('Custom dates')}
+              </button>
+            ))}
+          </div>
+        </div>
+        {mode === 'RANGE' ? (
+          <div className="flex flex-wrap gap-3">
+            <label className="flex flex-col gap-1.5">
+              <span className="label">{t('From')}</span>
+              <input type="date" className="field h-11" value={fromDate} max={toDate || undefined} onChange={(e) => setFromDate(e.target.value)} />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className="label">{t('To')}</span>
+              <input type="date" className="field h-11" value={toDate} min={fromDate || undefined} max={todayIst} onChange={(e) => setToDate(e.target.value)} />
+            </label>
+          </div>
+        ) : (
+        <>
         <div className="sm:w-52">
           <Select
             label={t('Month')}
@@ -119,6 +162,8 @@ export const MonthlyBillsPage: React.FC = () => {
             options={years.map((y) => ({ value: String(y), label: String(y) }))}
           />
         </div>
+        </>
+        )}
         <div className="flex flex-wrap gap-2 sm:ml-auto">
           <Button variant="secondary" icon={<RefreshCw size={18} />} onClick={load} disabled={isLoading || isFuture}>
             {t('Refresh')}

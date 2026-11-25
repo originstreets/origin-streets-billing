@@ -18,7 +18,7 @@ import { loginEmail } from '../../api/auth';
 import { roleWord } from '../../utils/roleWord';
 import { StaffMember } from '../../types';
 
-type Tab = 'BILL' | 'TAX' | 'PRINTER' | 'STAFF' | 'EDIT_BILL';
+type Tab = 'BILL' | 'TAX' | 'PRINTER' | 'CUSTOMERS' | 'STAFF' | 'EDIT_BILL';
 
 // A username is what staff type to sign in: letters, numbers, dot, dash, underscore.
 const USERNAME_RE = /^[a-z0-9._-]{3,30}$/;
@@ -159,6 +159,7 @@ export const SettingsPage: React.FC = () => {
     { id: 'BILL', label: t('Bill details') },
     { id: 'TAX', label: t('GST') },
     { id: 'PRINTER', label: t('Printer') },
+    { id: 'CUSTOMERS', label: t('Customers') },
     { id: 'STAFF', label: t('Staff') },
     ...(isOwner ? [{ id: 'EDIT_BILL', label: t('Change a saved bill') }] : []),
   ];
@@ -255,6 +256,8 @@ export const SettingsPage: React.FC = () => {
               </div>
             </form>
           )}
+
+          {activeTab === 'CUSTOMERS' && <VipSettings />}
 
           {activeTab === 'STAFF' && (
             <div className="space-y-5">
@@ -454,5 +457,52 @@ const StaffAccessEditor: React.FC<{
         <PermissionPicker value={permissions} onToggle={togglePermission} />
       </div>
     </Modal>
+  );
+};
+
+// Who counts as a VIP customer: total spend above this amount.
+const VipSettings: React.FC = () => {
+  const { settings } = useStore();
+  const t = useT();
+  const [amount, setAmount] = useState(String(settings.vipSpendThreshold));
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const n = Number(amount);
+    if (!Number.isFinite(n) || n < 0) {
+      store.addToast(t('Check the details'), t('The amount must be 0 or more.'), 'error');
+      return;
+    }
+    setSaving(true);
+    try {
+      await store.updateSettings({ vipSpendThreshold: n });
+    } catch (err) {
+      store.addToast(t('Settings not saved'), err instanceof Error ? err.message : undefined, 'error');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSave} className="space-y-5 max-w-xl">
+      <Input
+        label={t('VIP after spending (₹)')}
+        type="number"
+        inputMode="numeric"
+        min={0}
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        helperText={t('A customer whose bills add up to more than this is shown as VIP.')}
+      />
+      <div className="p-4 bg-os-soft text-base">
+        {t('Below that: "Bought before" after their first bill, "New" before it.')}
+      </div>
+      <div className="flex justify-end">
+        <Button type="submit" variant="primary" icon={<Save size={18} />} disabled={saving}>
+          {saving ? t('Saving…') : t('Save')}
+        </Button>
+      </div>
+    </form>
   );
 };

@@ -92,6 +92,7 @@ export interface DbPosSettings {
   printer_name: string | null;
   printer_connection: 'WIFI' | 'USB' | 'ETHERNET' | null;
   last_test_print: string | null;
+  vip_spend_threshold: number;
   low_stock_threshold: number;
   updated_at: string;
 }

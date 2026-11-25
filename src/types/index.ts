@@ -300,6 +300,8 @@ export interface CommerceSettings {
   // A colour x size row at or below this many pieces counts as low stock
   // (Settings -> Bill details).
   lowStockThreshold: number;
+  // A customer who has spent more than this in total is a VIP (Settings -> Customers).
+  vipSpendThreshold: number;
   printer: {
     name: string;
     status: 'ONLINE' | 'OFFLINE';
