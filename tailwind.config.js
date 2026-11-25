@@ -1,9 +1,11 @@
 /** @type {import('tailwindcss').Config} */
-// Origin look: black ink on white paper, square corners, Imbue headings and
-// Lato text (Telugu letters fall back to Noto Sans Telugu). Two colour
-// themes share every screen - only the accent changes:
-//   mono  black & white   accent = black
-//   red   red & white     accent = #FF0000
+// Origin look: black ink on white paper, flat grey panels, a black side rail.
+// Anybody (condensed, heavy) for titles and big numbers, Instrument Sans for
+// everything else (Telugu letters fall back to Noto Sans Telugu). Things you
+// press are pills; things that hold content are square. Two colour themes
+// share every screen - only the accent changes:
+//   mono  black & white   accent = black,   active item on the rail = white
+//   red   red & white     accent = #FF0000, active item on the rail = red
 // The values live in CSS variables (src/index.css), switched by
 // <html data-theme="...">, so `bg-os-accent`, `text-os-ink/60` etc. follow
 // the theme everywhere.
@@ -18,11 +20,15 @@ export default {
           ink: token('ink'),
           paper: token('paper'),
           page: token('page'),
+          panel: token('panel'),
           soft: token('soft'),
           line: token('line'),
           muted: token('muted'),
           accent: token('accent'),
           'accent-dark': token('accent-dark'),
+          // The active item and the main button on the black rail.
+          highlight: token('highlight'),
+          'on-highlight': token('on-highlight'),
         },
         status: {
           green: '#15803D',
@@ -40,14 +46,14 @@ export default {
         },
       },
       fontFamily: {
-        display: ['Imbue', "'Bodoni Moda'", "'Noto Sans Telugu'", 'Georgia', 'serif'],
-        sans: ['Lato', "'Noto Sans Telugu'", 'system-ui', 'sans-serif'],
-        mono: ['Lato', "'Noto Sans Telugu'", 'system-ui', 'sans-serif'],
+        display: ['Anybody', "'Noto Sans Telugu'", "'Arial Narrow'", 'system-ui', 'sans-serif'],
+        sans: ["'Instrument Sans'", "'Noto Sans Telugu'", 'system-ui', 'sans-serif'],
+        mono: ["'Instrument Sans'", "'Noto Sans Telugu'", 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         subtle: '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
-        float: '0 8px 24px -8px rgba(15, 15, 15, 0.18)',
-        modal: '0 16px 40px -12px rgba(15, 15, 15, 0.28)',
+        float: '0 12px 32px -12px rgba(0, 0, 0, 0.35)',
+        modal: '0 24px 60px -20px rgba(0, 0, 0, 0.45)',
       },
     },
   },

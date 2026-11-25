@@ -3,24 +3,31 @@
 @tailwind utilities;
 
 @layer base {
-  /* Theme tokens (RGB channels, so Tailwind can add opacity: bg-os-ink/40). */
+  /* Theme tokens (RGB channels, so Tailwind can add opacity: bg-os-ink/40).
+     Origin: pure black ink, white paper, flat grey panels. Only the accent
+     and the rail's highlight change between the two themes. */
   :root,
   :root[data-theme='mono'] {
     color-scheme: light;
-    --os-ink: 15 15 15;
+    --os-ink: 0 0 0;
     --os-paper: 255 255 255;
-    --os-page: 241 241 241;
-    --os-soft: 246 246 246;
+    --os-page: 255 255 255;
+    --os-panel: 243 243 243;
+    --os-soft: 232 232 232;
     --os-line: 217 217 217;
-    --os-muted: 77 77 77;
-    /* Black & white: the accent is black. */
-    --os-accent: 15 15 15;
-    --os-accent-dark: 0 0 0;
+    --os-muted: 89 89 89;
+    /* Black & white: the accent is black, the rail's active item white. */
+    --os-accent: 0 0 0;
+    --os-accent-dark: 43 43 43;
+    --os-highlight: 255 255 255;
+    --os-on-highlight: 0 0 0;
   }
   /* Red & white: the brand red #FF0000. */
   :root[data-theme='red'] {
     --os-accent: 255 0 0;
-    --os-accent-dark: 204 0 0;
+    --os-accent-dark: 214 0 0;
+    --os-highlight: 255 0 0;
+    --os-on-highlight: 255 255 255;
   }
 
   html {
@@ -30,24 +37,35 @@
   body {
     background-color: rgb(var(--os-page));
     color: rgb(var(--os-ink));
-    font-family: 'Lato', 'Noto Sans Telugu', system-ui, sans-serif;
+    font-family: 'Instrument Sans', 'Noto Sans Telugu', system-ui, sans-serif;
     line-height: 1.5;
+    font-variant-numeric: tabular-nums;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Titles: Anybody, heavy and condensed - the weight of the ORIGIN wordmark. */
   h1,
   h2,
   h3,
   .font-display {
-    font-family: 'Imbue', 'Bodoni Moda', 'Noto Sans Telugu', Georgia, serif;
+    font-family: 'Anybody', 'Noto Sans Telugu', 'Arial Narrow', system-ui, sans-serif;
     font-weight: 800;
+    font-stretch: 72%;
     letter-spacing: -0.01em;
+    line-height: 1.05;
   }
 
   /* Telugu reads better a little larger and with more line height. */
   html[lang='te'] body {
     line-height: 1.65;
+  }
+  html[lang='te'] h1,
+  html[lang='te'] h2,
+  html[lang='te'] h3,
+  html[lang='te'] .font-display {
+    letter-spacing: 0;
+    line-height: 1.3;
   }
 
   /* Big, clear keyboard focus for every control. */
@@ -55,9 +73,10 @@
     outline: 2px solid rgb(var(--os-accent));
     outline-offset: 2px;
   }
-  /* On the accent-coloured menu an accent ring would vanish - use white there. */
-  aside :focus-visible {
-    outline-color: #ffffff;
+  /* On the black rail a black ring would vanish - use the highlight there
+     (white in black & white, red in red & white). */
+  .os-rail :focus-visible {
+    outline-color: rgb(var(--os-highlight));
   }
 
   input[type='number']::-webkit-inner-spin-button,
@@ -70,7 +89,7 @@
     height: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: rgb(var(--os-page));
+    background: rgb(var(--os-panel));
   }
   ::-webkit-scrollbar-thumb {
     background: rgb(var(--os-line));
@@ -78,26 +97,71 @@
   ::-webkit-scrollbar-thumb:hover {
     background: rgb(var(--os-muted));
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer components {
-  /* A white card with a thin line - the one container used on every screen. */
+  /* A flat grey panel - the one container used on every screen. No outline. */
   .card {
-    @apply bg-os-paper border border-os-line;
+    @apply bg-os-panel;
   }
-  /* Small grey label above a value or a field. */
+  /* The big condensed title at the top of every screen. */
+  .page-title {
+    @apply font-display text-[2.5rem] sm:text-[3.5rem] leading-[0.95];
+  }
+  /* Small label above a value or a field. */
   .label {
-    @apply block text-sm font-bold text-os-muted;
+    @apply block text-[0.8125rem] font-semibold text-os-muted;
   }
-  /* Section title inside a card. */
+  /* Section title inside a panel. */
   .section-title {
     @apply text-base font-bold text-os-ink;
   }
   .table-head {
-    @apply text-left text-sm font-bold text-os-muted bg-os-soft border-b border-os-line;
+    @apply text-left text-[0.8125rem] font-semibold text-os-muted bg-transparent border-b-2 border-os-ink;
   }
+  /* A field: white, square, a grey line that turns black while typing. */
   .field {
-    @apply w-full bg-os-paper text-os-ink text-base px-3.5 py-2.5 border border-os-line focus:border-os-ink focus:outline-none;
+    @apply w-full bg-os-paper text-os-ink text-base px-3.5 py-2.5 border-2 border-os-line focus:border-os-ink focus:outline-none rounded-none;
+  }
+  /* A filter or choice you tap: a pill; black when chosen. */
+  .chip {
+    @apply h-10 px-4 inline-flex items-center justify-center gap-1.5 rounded-full text-[0.9375rem] font-semibold whitespace-nowrap bg-os-paper text-os-ink ring-1 ring-inset ring-os-line transition-colors hover:ring-os-ink;
+  }
+  .chip-on {
+    @apply bg-os-ink text-white ring-os-ink hover:ring-os-ink;
+  }
+  /* Two or more choices side by side (tabs, preview kind). */
+  .seg {
+    @apply inline-flex items-center gap-1 p-1 rounded-full bg-os-panel;
+  }
+  .seg-item {
+    @apply h-9 px-4 rounded-full text-sm font-semibold text-os-muted whitespace-nowrap transition-colors hover:text-os-ink;
+  }
+  .seg-item[aria-selected='true'] {
+    @apply bg-os-ink text-white hover:text-white;
+  }
+  /* On / off switch (a checkbox underneath). */
+  .os-switch {
+    @apply relative w-12 h-7 rounded-full bg-os-line cursor-pointer appearance-none transition-colors;
+  }
+  .os-switch::after {
+    content: '';
+    @apply absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform shadow-subtle;
+  }
+  .os-switch:checked {
+    @apply bg-os-accent;
+  }
+  .os-switch:checked::after {
+    transform: translateX(1.25rem);
   }
 }
 
