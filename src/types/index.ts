@@ -37,6 +37,8 @@ export interface ProductVariant {
   id: string;
   sku: string;
   color: string;
+  // The colour itself (picked on the colour wheel), e.g. #1F2A44.
+  colorHex?: string;
   size: string;
   price: number;
   compareAtPrice?: number;

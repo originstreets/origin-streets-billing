@@ -49,6 +49,7 @@ function mapVariant(v: DbProductVariant): ProductVariant {
     id: v.id,
     sku: variantCode(v),
     color: v.color || '',
+    colorHex: v.color_hex || undefined,
     size: v.size || '',
     price: v.price,
     compareAtPrice: v.compare_price ?? undefined,
@@ -202,6 +203,8 @@ export async function reorderCategorySizes(ids: string[]): Promise<void> {
 
 export interface NewVariantInput {
   color: string | null;
+  // The colour picked on the colour wheel (sent as-is to the database).
+  color_hex?: string | null;
   size: string;
   price: number;
   stock: number;
