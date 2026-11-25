@@ -83,7 +83,7 @@ export const CustomersPage: React.FC = () => {
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl sm:text-4xl">{t('Customers')}</h1>
+          <h1 className="page-title">{t('Customers')}</h1>
           <p className="text-base text-os-muted mt-1">{t('People who bought in the shop.')}</p>
         </div>
         <Button variant="primary" icon={<Plus size={18} />} onClick={() => setIsModalOpen(true)}>

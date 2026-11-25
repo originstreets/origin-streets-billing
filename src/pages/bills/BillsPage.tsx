@@ -59,10 +59,8 @@ export const BillsPage: React.FC = () => {
     if (!ok) store.addToast(t('Could not open printing'), t('Try again, or open the bill and print from there.'), 'error');
   };
 
-  const pill = (active: boolean) =>
-    `h-10 px-4 text-base font-bold whitespace-nowrap transition-colors ${
-      active ? 'bg-os-ink text-white' : 'bg-os-paper text-os-ink border border-os-line hover:border-os-ink'
-    }`;
+  // A filter you tap: a pill, black when chosen (index.css .chip).
+  const pill = (active: boolean) => `chip ${active ? 'chip-on' : ''}`;
 
   const channelLabel: Record<Channel, string> = {
     ALL: t('All'),
@@ -81,7 +79,7 @@ export const BillsPage: React.FC = () => {
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl sm:text-4xl">{t('All bills')}</h1>
+          <h1 className="page-title">{t('All bills')}</h1>
           <p className="text-base text-os-muted mt-1">
             {t('{n} bills', { n: orders.length })} · {t('Total')}: {formatINR(totalBilled)}
           </p>
@@ -121,7 +119,7 @@ export const BillsPage: React.FC = () => {
                 {channelLabel[ch]}
               </button>
             ))}
-            <span className="h-10 px-4 flex items-center gap-1.5 text-base border border-dashed border-os-line text-os-muted whitespace-nowrap">
+            <span className="h-10 px-4 inline-flex items-center gap-1.5 rounded-full text-[0.9375rem] border border-dashed border-os-line text-os-muted whitespace-nowrap">
               <Globe size={16} /> {channelLabel.ONLINE} · {t('Coming soon')}
             </span>
           </div>

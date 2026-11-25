@@ -140,7 +140,7 @@ export const CustomerDetailPage: React.FC = () => {
         ) : (
           <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="font-display text-3xl sm:text-4xl">{customer.name}</h1>
+              <h1 className="page-title">{customer.name}</h1>
               <StatusBadge status={customer.segment} />
             </div>
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-base">

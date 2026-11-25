@@ -49,7 +49,7 @@ export const CategoriesPage: React.FC = () => {
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl sm:text-4xl">{t('Categories & sizes')}</h1>
+          <h1 className="page-title">{t('Categories & sizes')}</h1>
           <p className="text-base text-os-muted mt-1">
             {t('Add a category, then the sizes it comes in. A new product picks its sizes from this list.')}
           </p>
@@ -137,7 +137,7 @@ const CategoryCard: React.FC<{ category: StoreCategory; productCount: number }> 
 
   return (
     <div className="card flex flex-col">
-      <div className="px-5 py-4 border-b border-os-line flex items-start justify-between gap-3">
+      <div className="px-5 sm:px-6 pt-5 pb-4 border-b border-os-line flex items-start justify-between gap-3">
         {renaming ? (
           <form onSubmit={handleRename} className="flex-1 flex gap-2">
             <input className="field h-11" value={name} onChange={(e) => setName(e.target.value)} autoFocus maxLength={60} aria-label={t('Category name')} />
@@ -177,7 +177,7 @@ const CategoryCard: React.FC<{ category: StoreCategory; productCount: number }> 
         ) : (
           <div className="flex flex-wrap gap-2">
             {category.sizes.map((z, i) => (
-              <div key={z.id} className="flex items-stretch border border-os-ink h-11">
+              <div key={z.id} className="flex items-stretch h-11 rounded-full bg-os-paper ring-1 ring-inset ring-os-ink overflow-hidden">
                 <button
                   type="button"
                   aria-label={t('Move {size} left', { size: z.size })}
@@ -187,7 +187,7 @@ const CategoryCard: React.FC<{ category: StoreCategory; productCount: number }> 
                 >
                   <ChevronLeft size={16} />
                 </button>
-                <span className="px-2 flex items-center text-base font-bold min-w-[2.5rem] justify-center">{z.size}</span>
+                <span className="px-1.5 flex items-center text-base font-semibold min-w-[2.25rem] justify-center">{z.size}</span>
                 <button
                   type="button"
                   aria-label={t('Move {size} right', { size: z.size })}
@@ -202,7 +202,7 @@ const CategoryCard: React.FC<{ category: StoreCategory; productCount: number }> 
                   aria-label={t('Remove size {size}', { size: z.size })}
                   disabled={busy}
                   onClick={() => void run(t('Size not removed'), () => store.deleteCategorySize(z.id))}
-                  className="w-9 flex items-center justify-center border-l border-os-line text-os-muted hover:text-status-red hover:bg-status-redBg disabled:opacity-25"
+                  className="w-10 flex items-center justify-center border-l border-os-line text-os-muted hover:text-status-red hover:bg-status-redBg disabled:opacity-25"
                 >
                   <X size={16} />
                 </button>

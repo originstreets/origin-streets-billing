@@ -220,7 +220,7 @@ export const PriceTagGeneratorPage: React.FC = () => {
   if (sellable.length === 0) {
     return (
       <div className="space-y-4">
-        <h1 className="font-display text-3xl sm:text-4xl">{t('Price tags')}</h1>
+        <h1 className="page-title">{t('Price tags')}</h1>
         <div className="card p-8 text-base text-os-muted">{t('No products with colours and sizes yet.')}</div>
       </div>
     );
@@ -230,7 +230,7 @@ export const PriceTagGeneratorPage: React.FC = () => {
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 no-print">
         <div>
-          <h1 className="font-display text-3xl sm:text-4xl">{t('Price tags')}</h1>
+          <h1 className="page-title">{t('Price tags')}</h1>
           <p className="text-base text-os-muted mt-1">{t('Choose a product, check the sizes, print.')}</p>
         </div>
         <Button variant="accent" size="lg" icon={<Printer size={22} />} onClick={() => window.print()} disabled={totalTags === 0}>

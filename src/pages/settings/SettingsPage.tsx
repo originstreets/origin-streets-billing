@@ -173,7 +173,7 @@ export const SettingsPage: React.FC = () => {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="font-display text-3xl sm:text-4xl">{t('Settings & staff')}</h1>
+        <h1 className="page-title">{t('Settings & staff')}</h1>
       </div>
 
       <div className="card">

@@ -118,7 +118,7 @@ export const ProductDetailPage: React.FC = () => {
           <div className="flex flex-wrap gap-2">
             {product.status === 'ARCHIVED' && <StatusBadge status="ARCHIVED" />}
           </div>
-          <h1 className="font-display text-3xl sm:text-4xl">{product.name}</h1>
+          <h1 className="page-title">{product.name}</h1>
           <div className="text-base text-os-muted">{product.category}</div>
           <div className="flex items-baseline gap-3">
             <span className="text-3xl font-black">{formatINR(product.price)}</span>
@@ -182,7 +182,7 @@ export const ProductDetailPage: React.FC = () => {
                           aria-label={t('Remove one piece')}
                           disabled={v.stock <= 0 || busy}
                           onClick={() => void runAdjust(v.id, -1, 'ADJUSTMENT')}
-                          className="w-11 h-11 border border-os-line hover:border-os-ink disabled:opacity-30 flex items-center justify-center"
+                          className="w-11 h-11 rounded-full bg-os-paper ring-1 ring-inset ring-os-line hover:ring-os-ink disabled:opacity-30 flex items-center justify-center"
                         >
                           <Minus size={18} />
                         </button>
@@ -190,7 +190,7 @@ export const ProductDetailPage: React.FC = () => {
                           aria-label={t('Add one piece')}
                           disabled={busy}
                           onClick={() => void runAdjust(v.id, 1, 'RESTOCK')}
-                          className="w-11 h-11 border border-os-line hover:border-os-ink disabled:opacity-30 flex items-center justify-center"
+                          className="w-11 h-11 rounded-full bg-os-paper ring-1 ring-inset ring-os-line hover:ring-os-ink disabled:opacity-30 flex items-center justify-center"
                         >
                           <Plus size={18} />
                         </button>
@@ -221,7 +221,7 @@ export const ProductDetailPage: React.FC = () => {
                                 setBusy(false);
                               }
                             }}
-                            className="w-11 h-11 border border-status-redBorder text-status-red hover:bg-status-redBg disabled:opacity-30 flex items-center justify-center"
+                            className="w-11 h-11 rounded-full bg-status-redBg text-status-red hover:bg-status-red hover:text-white disabled:opacity-30 flex items-center justify-center"
                           >
                             <Trash2 size={17} />
                           </button>

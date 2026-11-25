@@ -94,7 +94,7 @@ export const MonthlyBillsPage: React.FC = () => {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="font-display text-3xl sm:text-4xl">{t('Monthly GST report')}</h1>
+        <h1 className="page-title">{t('Monthly GST report')}</h1>
         <p className="text-base text-os-muted mt-1">
           {t('One PDF with every shop bill of the month and the GST totals.')}
         </p>

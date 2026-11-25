@@ -38,16 +38,14 @@ export const ProductsPage: React.FC = () => {
     return matchesSearch && (category === 'ALL' || p.category === category);
   });
 
-  const pill = (active: boolean) =>
-    `h-10 px-4 text-base font-bold whitespace-nowrap transition-colors ${
-      active ? 'bg-os-ink text-white' : 'bg-os-paper text-os-ink border border-os-line hover:border-os-ink'
-    }`;
+  // A filter you tap: a pill, black when chosen (index.css .chip).
+  const pill = (active: boolean) => `chip ${active ? 'chip-on' : ''}`;
 
   return (
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl sm:text-4xl">{t('Products & stock')}</h1>
+          <h1 className="page-title">{t('Products & stock')}</h1>
           <p className="text-base text-os-muted mt-1">{t('Add categories and their sizes first, then products with their colours and stock.')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">

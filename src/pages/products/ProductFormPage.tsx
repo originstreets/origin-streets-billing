@@ -139,7 +139,7 @@ export const ProductFormPage: React.FC = () => {
 
   const step = (n: number, title: string, text?: string) => (
     <div className="px-5 py-4 border-b border-os-line flex items-start gap-3">
-      <span className="h-8 w-8 bg-os-accent text-white text-base font-bold flex items-center justify-center shrink-0">{n}</span>
+      <span className="h-8 w-8 rounded-full bg-os-accent text-white text-base font-semibold flex items-center justify-center shrink-0">{n}</span>
       <div>
         <h2 className="font-display text-2xl leading-tight">{title}</h2>
         {text && <p className="text-base text-os-muted">{text}</p>}
@@ -163,7 +163,7 @@ export const ProductFormPage: React.FC = () => {
   return (
     <div className="space-y-5 max-w-4xl">
       <div>
-        <h1 className="font-display text-3xl sm:text-4xl">{t('Add product')}</h1>
+        <h1 className="page-title">{t('Add product')}</h1>
         <p className="text-base text-os-muted mt-1">{t('Fill in the four steps, then save.')}</p>
       </div>
 
@@ -232,8 +232,8 @@ export const ProductFormPage: React.FC = () => {
                       type="button"
                       onClick={() => toggleSize(z.size)}
                       aria-pressed={on}
-                      className={`min-w-[3.5rem] h-12 px-3 border text-base font-bold flex items-center justify-center gap-1.5 transition-colors ${
-                        on ? 'bg-os-ink text-white border-os-ink' : 'bg-os-paper border-os-line hover:border-os-ink'
+                      className={`min-w-[3.5rem] h-12 px-4 rounded-full ring-1 ring-inset text-base font-semibold flex items-center justify-center gap-1.5 transition-colors ${
+                        on ? 'bg-os-ink text-white ring-os-ink' : 'bg-os-paper ring-os-line hover:ring-os-ink'
                       }`}
                     >
                       {on && <Check size={16} />}
@@ -275,13 +275,13 @@ export const ProductFormPage: React.FC = () => {
           {colours.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {colours.map((c) => (
-                <span key={c} className="h-11 pl-3 flex items-center gap-1 border border-os-ink text-base font-bold">
+                <span key={c} className="h-11 pl-4 pr-1 rounded-full bg-os-ink text-white flex items-center gap-1 text-base font-semibold">
                   {c}
                   <button
                     type="button"
                     onClick={() => setColours((prev) => prev.filter((x) => x !== c))}
                     aria-label={t('Remove colour {c}', { c })}
-                    className="h-full w-10 flex items-center justify-center text-os-muted hover:text-status-red"
+                    className="h-9 w-9 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/15"
                   >
                     <X size={16} />
                   </button>
@@ -300,7 +300,7 @@ export const ProductFormPage: React.FC = () => {
             <p className="text-base text-os-muted">{t('Tick the sizes in step 2 first.')}</p>
           ) : (
             <>
-              <div className="overflow-x-auto border border-os-line">
+              <div className="overflow-x-auto bg-os-paper">
                 <table className="w-full border-collapse text-base">
                   <thead>
                     <tr>
@@ -368,7 +368,7 @@ export const ProductFormPage: React.FC = () => {
         </div>
       </section>
 
-      <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 sm:px-5 py-3 bg-os-paper border-t sm:border border-os-line flex flex-wrap items-center justify-between gap-3">
+      <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 sm:px-5 py-3 bg-os-paper border-t-2 border-os-ink flex flex-wrap items-center justify-between gap-3">
         <div className="text-base">
           <b>{rows.length * orderedSizes.length}</b> {t('colour and size rows')} · <b>{totalPieces}</b> {t('pieces')}
         </div>

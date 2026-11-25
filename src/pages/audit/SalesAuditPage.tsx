@@ -117,10 +117,8 @@ export const SalesAuditPage: React.FC = () => {
   };
   const printRange: Record<Range, string> = { ALL: 'All time', TODAY: 'Today', WEEK: 'Last 7 days', MONTH: 'This month' };
 
-  const pill = (active: boolean) =>
-    `h-10 px-4 text-base font-bold whitespace-nowrap transition-colors ${
-      active ? 'bg-os-ink text-white' : 'bg-os-paper text-os-ink border border-os-line hover:border-os-ink'
-    }`;
+  // A filter you tap: a pill, black when chosen (index.css .chip).
+  const pill = (active: boolean) => `chip ${active ? 'chip-on' : ''}`;
 
   const line = (label: string, value: string, strong = false) => (
     <div className={`flex justify-between gap-3 py-2 ${strong ? 'font-black text-lg' : 'text-base'}`}>
@@ -136,7 +134,7 @@ export const SalesAuditPage: React.FC = () => {
     <div className="space-y-5">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 no-print">
         <div>
-          <h1 className="font-display text-3xl sm:text-4xl">{t('Check sales')}</h1>
+          <h1 className="page-title">{t('Check sales')}</h1>
           <p className="text-base text-os-muted mt-1">{t('Shop sales and the money count for the shop.')}</p>
         </div>
         <Button variant="primary" icon={<Printer size={18} />} onClick={() => window.print()}>
@@ -258,7 +256,7 @@ export const SalesAuditPage: React.FC = () => {
             <button onClick={() => setChannelFilter('OFFLINE')} className={pill(channelFilter === 'OFFLINE')}>
               {t('Shop')} ({shopBills.length})
             </button>
-            <span className="h-10 px-4 flex items-center gap-1.5 text-base border border-dashed border-os-line text-os-muted whitespace-nowrap">
+            <span className="h-10 px-4 inline-flex items-center gap-1.5 rounded-full text-[0.9375rem] border border-dashed border-os-line text-os-muted whitespace-nowrap">
               <Globe size={16} /> {t('Online store')} · {t('Coming soon')}
             </span>
           </div>

@@ -250,8 +250,8 @@ export const AddVariantsModal: React.FC<{ product: Product; onClose: () => void 
                     type="button"
                     aria-pressed={on}
                     onClick={() => setSizes((prev) => (prev.includes(z) ? prev.filter((x) => x !== z) : [...prev, z]))}
-                    className={`min-w-[3.25rem] h-11 px-3 border text-base font-bold flex items-center justify-center gap-1.5 ${
-                      on ? 'bg-os-ink text-white border-os-ink' : 'bg-os-paper border-os-line hover:border-os-ink'
+                    className={`min-w-[3.25rem] h-11 px-4 rounded-full ring-1 ring-inset text-base font-semibold flex items-center justify-center gap-1.5 ${
+                      on ? 'bg-os-ink text-white ring-os-ink' : 'bg-os-paper ring-os-line hover:ring-os-ink'
                     }`}
                   >
                     {on && <Check size={15} />}
@@ -284,14 +284,14 @@ export const AddVariantsModal: React.FC<{ product: Product; onClose: () => void 
               {colours.map((c) => {
                 const isOld = product.colors.includes(c);
                 return (
-                  <span key={c} className="h-10 pl-3 pr-1 flex items-center gap-1 border border-os-ink text-base font-bold">
+                  <span key={c} className="h-10 pl-4 pr-1 rounded-full bg-os-ink text-white flex items-center gap-1 text-base font-semibold">
                     {c}
                     {!isOld && (
                       <button
                         type="button"
                         onClick={() => setColours((prev) => prev.filter((x) => x !== c))}
                         aria-label={t('Remove colour {c}', { c })}
-                        className="h-full w-8 flex items-center justify-center text-os-muted hover:text-status-red"
+                        className="h-8 w-8 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/15"
                       >
                         <X size={15} />
                       </button>
@@ -306,7 +306,7 @@ export const AddVariantsModal: React.FC<{ product: Product; onClose: () => void 
         {orderedSizes.length > 0 && (
           <div className="space-y-2">
             <div className="label">{t('Pieces for each new colour and size')}</div>
-            <div className="overflow-x-auto border border-os-line">
+            <div className="overflow-x-auto bg-os-panel">
               <table className="w-full border-collapse text-base">
                 <thead>
                   <tr>
