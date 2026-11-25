@@ -251,7 +251,20 @@ export interface StaffMember {
   permissions: string[];
 }
 
-// Business identity comes from Settings -> Shop details; any field can
+// What the printed bill says besides the shop's details. An empty line is
+// left off the bill.
+export interface BillText {
+  thankYou: string;
+  qrLabel: string;
+  invoiceTitle: string;
+  signatory: string;
+  computerNote: string;
+  showLogo: boolean;
+  showQr: boolean;
+  showBarcode: boolean;
+}
+
+// Business identity comes from Settings -> Bill details; any field can
 // still be blank there.
 export interface CommerceSettings {
   storeName: string;
@@ -269,6 +282,8 @@ export interface CommerceSettings {
   logoUrl: string;
   terms: string;
   footer: string;
+  // Lines and parts of the printed bill (Settings -> Bill details).
+  bill: BillText;
   invoicePrefix: string;
   currency: string;
   taxRate: number;
@@ -279,7 +294,7 @@ export interface CommerceSettings {
   shippingFlatRate: number;
   freeShippingThreshold: number;
   // A colour x size row at or below this many pieces counts as low stock
-  // (Settings -> Shop details).
+  // (Settings -> Bill details).
   lowStockThreshold: number;
   printer: {
     name: string;

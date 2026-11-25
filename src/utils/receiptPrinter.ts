@@ -53,7 +53,7 @@ export interface PrintableReceiptData {
     amount: number;
   }>;
   changeAmount?: number;
-  // Business identity from Settings -> Shop details; blank fields are
+  // Business identity from Settings -> Bill details; blank fields are
   // simply left off the print.
   storeSettings?: {
     storeName?: string;
@@ -69,7 +69,24 @@ export interface PrintableReceiptData {
     footer?: string;
     taxRate?: number;
     taxIsCustom?: boolean;
+    // Settings -> Bill details. An empty line ('') is left off the bill;
+    // a missing one prints its default.
+    thankYou?: string;
+    qrLabel?: string;
+    invoiceTitle?: string;
+    signatory?: string;
+    computerNote?: string;
+    // Printed at the top instead of the shop name when set.
+    logoUrl?: string;
+    showQr?: boolean;
+    showBarcode?: boolean;
   };
+}
+
+// A line from Bill details: its saved text, its default when never saved,
+// nothing when saved empty.
+function line(value: string | undefined, fallback: string): string {
+  return value === undefined ? fallback : value.trim();
 }
 
 /**
@@ -118,6 +135,7 @@ function getVectorBarcodeSvg(code: string): string {
 // Bill QR for printed receipts/invoices (see utils/billQr.ts): scanning it
 // opens this same bill - same layout, same look - as a web page.
 function getBillQrHtml(data: PrintableReceiptData, sizePx: number, kind: BillPrintKind): string {
+  if (data.storeSettings?.showQr === false) return '';
   const svg = data.billId
     ? billLinkQrSvg(billPageUrl(data.billId, kind), sizePx)
     : billQrSvg(
@@ -133,7 +151,10 @@ function getBillQrHtml(data: PrintableReceiptData, sizePx: number, kind: BillPri
   return `
     <div style="text-align: center; margin: 6px 0 2px;">
       <div style="display: inline-block;">${svg}</div>
-      <div style="font-family: monospace; font-size: 9px; color: #333333; text-transform: uppercase;">${data.billId ? 'Scan to see this bill' : 'Scan for full bill'}</div>
+      ${(() => {
+        const caption = data.billId ? line(data.storeSettings?.qrLabel, 'Scan to see this bill') : 'Scan for full bill';
+        return caption ? `<div style="font-family: monospace; font-size: 9px; color: #333333; text-transform: uppercase;">${esc(caption)}</div>` : '';
+      })()}
     </div>
   `;
 }
@@ -165,8 +186,20 @@ function printDocument(html: string): Promise<boolean> {
     doc.write(html);
     doc.close();
 
+    // The logo is an image: wait for it (at most 3 s) so it is on the paper.
+    const images = Array.from(doc.images);
+    const loaded = Promise.all(
+      images.map((img) =>
+        img.complete ? Promise.resolve() : new Promise<void>((done) => {
+          img.onload = () => done();
+          img.onerror = () => done();
+        })
+      )
+    );
+    const ready = Promise.race([loaded, new Promise<void>((done) => setTimeout(done, 3000))]);
+
     // Trigger print
-    setTimeout(() => {
+    void ready.then(() => setTimeout(() => {
       try {
         iframe.contentWindow?.focus();
         iframe.contentWindow?.print();
@@ -182,7 +215,7 @@ function printDocument(html: string): Promise<boolean> {
           }
         }, 3000);
       }
-    }, 250);
+    }, 250));
   });
 }
 
@@ -291,6 +324,12 @@ export function thermalReceiptHtml(data: PrintableReceiptData): string {
             .font-black { font-weight: 900; }
             .uppercase { text-transform: uppercase; }
             
+            .brand-logo {
+              display: block;
+              height: 34px;
+              width: auto;
+              margin: 0 auto 4px;
+            }
             .brand-title {
               font-size: 20px;
               font-weight: 900;
@@ -406,7 +445,11 @@ export function thermalReceiptHtml(data: PrintableReceiptData): string {
           <div class="receipt">
             <!-- Brand Header -->
             <div class="text-center">
-              <div class="brand-title">${esc(data.storeSettings?.storeName || 'Origin')}</div>
+              ${
+                data.storeSettings?.logoUrl
+                  ? `<img class="brand-logo" src="${esc(data.storeSettings.logoUrl)}" alt="${esc(data.storeSettings?.storeName || 'Origin')}">`
+                  : `<div class="brand-title">${esc(data.storeSettings?.storeName || 'Origin')}</div>`
+              }
               ${data.storeSettings?.tagline ? `<div class="brand-subtitle">${esc(data.storeSettings.tagline)}</div>` : ''}
               ${data.storeSettings?.address ? `<div class="store-address">${esc(data.storeSettings.address)}</div>` : ''}
               ${data.storeSettings?.cityState ? `<div class="store-address">${esc(data.storeSettings.cityState)}</div>` : ''}
@@ -496,10 +539,13 @@ export function thermalReceiptHtml(data: PrintableReceiptData): string {
 
             <!-- Authentic Vector Barcode -->
             <div class="barcode-wrap">
-              ${getVectorBarcodeSvg(data.orderNumber)}
+              ${data.storeSettings?.showBarcode === false ? '' : getVectorBarcodeSvg(data.orderNumber)}
               ${getBillQrHtml(data, 180, 'slip')}
               ${data.storeSettings?.footer ? `<div class="policy-footer">${esc(data.storeSettings.footer)}</div>` : ''}
-              <div class="policy-footer">Thank you for shopping at ${esc(data.storeSettings?.storeName || 'Origin')}</div>
+              ${(() => {
+                const thanks = line(data.storeSettings?.thankYou, `Thank you for shopping at ${data.storeSettings?.storeName || 'Origin'}`);
+                return thanks ? `<div class="policy-footer">${esc(thanks)}</div>` : '';
+              })()}
             </div>
           </div>
         </body>
@@ -510,7 +556,7 @@ export function thermalReceiptHtml(data: PrintableReceiptData): string {
 /**
  * 2. A4 GST TAX INVOICE
  * For A4 printers and "Save as PDF". Business details, terms and footer come
- * from Settings -> Shop details. There is no HSN column: Origin products
+ * from Settings -> Bill details. There is no HSN column: Origin products
  * carry no HSN code, and printing a made-up one would be wrong. Scanning
  * its QR code shows this same invoice.
  */
@@ -580,6 +626,12 @@ export function taxInvoiceHtml(data: PrintableReceiptData): string {
               border-bottom: 2px solid #0A0A0A;
               padding-bottom: 20px;
               margin-bottom: 20px;
+            }
+            .brand-logo {
+              display: block;
+              height: 40px;
+              width: auto;
+              margin-bottom: 6px;
             }
             .brand-name {
               font-size: 28px;
@@ -716,7 +768,11 @@ export function taxInvoiceHtml(data: PrintableReceiptData): string {
             <!-- Header -->
             <div class="header-flex">
               <div>
-                <div class="brand-name">${esc(data.storeSettings?.storeName || 'Origin')}</div>
+                ${
+                  data.storeSettings?.logoUrl
+                    ? `<img class="brand-logo" src="${esc(data.storeSettings.logoUrl)}" alt="${esc(data.storeSettings?.storeName || 'Origin')}">`
+                    : `<div class="brand-name">${esc(data.storeSettings?.storeName || 'Origin')}</div>`
+                }
                 ${data.storeSettings?.tagline ? `<div class="brand-sub">${esc(data.storeSettings.tagline)}</div>` : ''}
                 <div class="store-info">
                   ${data.storeSettings?.address ? `<div>${esc(data.storeSettings.address)}</div>` : ''}
@@ -728,7 +784,10 @@ export function taxInvoiceHtml(data: PrintableReceiptData): string {
               </div>
 
               <div style="text-align: right;">
-                <div class="invoice-badge">TAX INVOICE</div>
+                ${(() => {
+                  const title = line(data.storeSettings?.invoiceTitle, 'TAX INVOICE');
+                  return title ? `<div class="invoice-badge">${esc(title)}</div>` : '';
+                })()}
                 <div class="invoice-number">${esc(data.orderNumber)}</div>
                 <div class="invoice-date">Date: ${esc(data.createdAt)}</div>
               </div>
@@ -827,9 +886,12 @@ export function taxInvoiceHtml(data: PrintableReceiptData): string {
                     : ''
                 }
                 ${data.storeSettings?.footer ? `<div style="margin-top: 4px; white-space: pre-line;">${esc(data.storeSettings.footer)}</div>` : ''}
-                <div style="margin-top: 4px;">This is a computer-generated tax invoice.</div>
+                ${(() => {
+                  const note = line(data.storeSettings?.computerNote, 'This is a computer-generated tax invoice.');
+                  return note ? `<div style="margin-top: 4px;">${esc(note)}</div>` : '';
+                })()}
                 <div style="margin-top: 8px; display: flex; align-items: center; gap: 16px;">
-                  ${getVectorBarcodeSvg(data.orderNumber)}
+                  ${data.storeSettings?.showBarcode === false ? '' : getVectorBarcodeSvg(data.orderNumber)}
                   ${getBillQrHtml(data, 110, 'a4')}
                 </div>
               </div>
@@ -838,7 +900,7 @@ export function taxInvoiceHtml(data: PrintableReceiptData): string {
                 <div style="height: 48px;"></div>
                 <div class="signature-box">
                   FOR ${esc((data.storeSettings?.storeName || 'Origin').toUpperCase())}<br>
-                  <span style="font-size: 9px; font-weight: 400; color: #666666;">Authorized Signatory</span>
+                  <span style="font-size: 9px; font-weight: 400; color: #666666;">${esc(line(data.storeSettings?.signatory, 'Authorized Signatory'))}</span>
                 </div>
               </div>
             </div>

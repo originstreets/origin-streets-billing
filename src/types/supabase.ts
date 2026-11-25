@@ -94,8 +94,9 @@ export interface DbPosSettings {
   updated_at: string;
 }
 
-// settings row key = 'invoice' (Settings -> Shop details): the shop's details
-// printed on every bill. Every field is optional until it is filled in.
+// settings row key = 'invoice' (Settings -> Bill details): everything printed
+// on a bill besides the bill itself. Every field is optional; a text line
+// saved empty ('') is left off the bill, a missing one prints its default.
 export interface DbInvoiceTemplate {
   company_name?: string;
   tagline?: string;
@@ -116,6 +117,16 @@ export interface DbInvoiceTemplate {
   tax_label?: string;
   show_tax?: boolean;
   invoice_prefix?: string;
+  // Lines printed on the bill.
+  thank_you_note?: string;
+  qr_label?: string;
+  invoice_title?: string;
+  signatory_label?: string;
+  computer_note?: string;
+  // What prints on the bill.
+  show_logo?: boolean;
+  show_qr?: boolean;
+  show_barcode?: boolean;
 }
 
 export interface DbPosBill {

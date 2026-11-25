@@ -80,6 +80,7 @@ let currentState: CommerceState = {
     logoUrl: '',
     terms: '',
     footer: '',
+    bill: posApi.billTextFromShop({}),
     invoicePrefix: 'ORS',
     currency: 'INR',
     taxRate: 0,
@@ -591,13 +592,13 @@ export const store = {
     store.addToast(tr('Product deleted'), product?.name, 'info');
   },
 
-  // Shop details printed on every bill (Settings -> Shop details).
-  saveShopDetails: async (updates: DbInvoiceTemplate, lowStockThreshold?: number) => {
+  // Everything printed on a bill (Settings -> Bill details).
+  saveBillDetails: async (updates: DbInvoiceTemplate, other: { invoicePrefix?: string; lowStockThreshold?: number }) => {
     await saveInvoiceTemplate(updates);
-    if (lowStockThreshold !== undefined) await posApi.saveSettings({ lowStockThreshold });
+    await posApi.saveSettings({ invoicePrefix: other.invoicePrefix, lowStockThreshold: other.lowStockThreshold });
     const settings = await posApi.fetchSettings();
     saveState({ ...currentState, settings });
-    store.addToast(tr('Shop details saved'), undefined, 'success');
+    store.addToast(tr('Bill details saved'), undefined, 'success');
   },
 
   // SETTINGS

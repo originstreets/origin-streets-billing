@@ -6,19 +6,19 @@ import { Select } from '../../components/ui/Select';
 import { Tabs } from '../../components/ui/Tabs';
 import { Modal } from '../../components/ui/Modal';
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import { Printer, Save, Plus, Eye, EyeOff, Pencil, AlertTriangle } from 'lucide-react';
+import { Printer, Save, Plus, Eye, EyeOff } from 'lucide-react';
 import { ALL_PERMISSIONS, DEFAULT_PERMISSIONS_BY_ROLE, PERMISSION_LABELS, PermissionKey, DbStaffRole } from '../../constants/permissions';
 import { printThermalReceipt } from '../../utils/receiptPrinter';
 import { EditInvoicePanel } from './EditInvoicePanel';
 import { formatDateTime, toIstDateTime } from '../../utils/formatters';
 import { useT } from '../../i18n';
-import { ShopDetailsModal } from './ShopDetailsModal';
-import { OnlineStoreSoon } from '../../components/common/OnlineStoreSoon';
+import { BillDetailsPanel } from './BillDetailsPanel';
+import { shopPrintSettings } from '../../utils/printBill';
 import { loginEmail } from '../../api/auth';
 import { roleWord } from '../../utils/roleWord';
 import { StaffMember } from '../../types';
 
-type Tab = 'SHOP' | 'TAX' | 'PRINTER' | 'STAFF' | 'EDIT_BILL';
+type Tab = 'BILL' | 'TAX' | 'PRINTER' | 'STAFF' | 'EDIT_BILL';
 
 // A username is what staff type to sign in: letters, numbers, dot, dash, underscore.
 const USERNAME_RE = /^[a-z0-9._-]{3,30}$/;
@@ -27,7 +27,7 @@ export const SettingsPage: React.FC = () => {
   const { settings, staff, currentStaff } = useStore();
   const t = useT();
   const isOwner = currentStaff?.role === 'OWNER';
-  const [activeTab, setActiveTab] = useState<Tab>('SHOP');
+  const [activeTab, setActiveTab] = useState<Tab>('BILL');
 
   const [taxThreshold, setTaxThreshold] = useState(String(settings.taxThreshold));
   const [taxRateLow, setTaxRateLow] = useState(String(settings.taxRateLow));
@@ -44,7 +44,6 @@ export const SettingsPage: React.FC = () => {
   }, [settings]);
 
   const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
-  const [isShopModalOpen, setIsShopModalOpen] = useState(false);
   const [newStaffName, setNewStaffName] = useState('');
   const [newStaffUsername, setNewStaffUsername] = useState('');
   const [newStaffPassword, setNewStaffPassword] = useState('');
@@ -98,16 +97,7 @@ export const SettingsPage: React.FC = () => {
         taxAmount: 0,
         grandTotal: 999,
         paymentMethod: 'CASH',
-        storeSettings: {
-          storeName: settings.brand || settings.storeName,
-          tagline: settings.tagline,
-          address: settings.address,
-          cityState: settings.cityState,
-          phone: settings.phone,
-          gstin: settings.gstin,
-          footer: settings.footer,
-          taxRate: 0,
-        },
+        storeSettings: shopPrintSettings(settings, 0),
       });
       if (opened) await store.testPrint();
       else store.addToast(t('Could not open printing'), t('Please try again.'), 'error');
@@ -166,19 +156,12 @@ export const SettingsPage: React.FC = () => {
   };
 
   const tabs = [
-    { id: 'SHOP', label: t('Shop details') },
+    { id: 'BILL', label: t('Bill details') },
     { id: 'TAX', label: t('GST') },
     { id: 'PRINTER', label: t('Printer') },
     { id: 'STAFF', label: t('Staff') },
     ...(isOwner ? [{ id: 'EDIT_BILL', label: t('Change a saved bill') }] : []),
   ];
-
-  const detail = (label: string, value: string) => (
-    <div className="py-3 grid grid-cols-1 sm:grid-cols-3 gap-1">
-      <div className="label">{label}</div>
-      <div className={`sm:col-span-2 text-base ${value ? 'font-bold' : 'text-status-red font-bold'}`}>{value || t('Not filled in')}</div>
-    </div>
-  );
 
   const roleOptions = [
     { value: 'BILLING', label: t('Cashier') },
@@ -197,33 +180,7 @@ export const SettingsPage: React.FC = () => {
         <Tabs tabs={tabs} activeTab={activeTab} onChange={(id) => setActiveTab(id as Tab)} className="px-2" />
 
         <div className="p-5">
-          {activeTab === 'SHOP' && (
-            <div className="space-y-4">
-              <p className="text-base text-os-muted">
-                {t('These details print on every bill and on the monthly GST report.')}
-              </p>
-              {!settings.gstin && (
-                <div className="flex gap-3 p-4 border border-status-amberBorder bg-status-amberBg text-status-amber text-base font-bold">
-                  <AlertTriangle size={22} className="shrink-0" />
-                  {t('GSTIN is not filled in yet. Add it here before giving GST bills.')}
-                </div>
-              )}
-              <div className="divide-y divide-os-line border-y border-os-line">
-                {detail(t('Shop name'), settings.brand)}
-                {detail(t('Address'), [settings.address, settings.cityState].filter(Boolean).join(', '))}
-                {detail(t('State'), settings.state)}
-                {detail(t('Phone'), settings.phone)}
-                {detail('GSTIN', settings.gstin)}
-                {detail(t('Bill bottom line'), settings.footer)}
-              </div>
-              <Button variant="primary" icon={<Pencil size={18} />} onClick={() => setIsShopModalOpen(true)}>
-                {t('Change shop details')}
-              </Button>
-              <div className="pt-2">
-                <OnlineStoreSoon />
-              </div>
-            </div>
-          )}
+          {activeTab === 'BILL' && <BillDetailsPanel />}
 
           {activeTab === 'TAX' && (
             <form onSubmit={handleSave} className="space-y-5">
@@ -263,7 +220,7 @@ export const SettingsPage: React.FC = () => {
               <div className="p-4 border border-os-line text-base space-y-1">
                 <div className="section-title">{t('Bill numbers')}</div>
                 <div>
-                  {t('Shop bills')}: <b>ORS-YYMM-0001</b>
+                  {t('Shop bills')}: <b>{settings.invoicePrefix}-YYMM-0001</b>
                 </div>
                 <div className="text-os-muted">{t('Numbers start again from 0001 every month. They are given by the database, so there are no gaps.')}</div>
               </div>
@@ -413,8 +370,6 @@ export const SettingsPage: React.FC = () => {
           </div>
         </form>
       </Modal>
-
-      {isShopModalOpen && <ShopDetailsModal onClose={() => setIsShopModalOpen(false)} />}
 
       {isOwner && editingStaffId && (
         <StaffAccessEditor

@@ -9,6 +9,7 @@ import {
   Order,
   OrderItem,
   CommerceSettings,
+  BillText,
   InventoryLog,
   PaymentTransaction,
   ReturnRequest,
@@ -736,7 +737,23 @@ export async function fetchInventoryLogs(): Promise<InventoryLog[]> {
   }));
 }
 
-// Business identity comes from Settings -> Shop details (settings key
+// The printed bill's own lines. A line never saved prints its default; a
+// line saved empty is left off.
+export function billTextFromShop(tpl: DbInvoiceTemplate): BillText {
+  const brand = tpl.company_name || 'Origin';
+  return {
+    thankYou: tpl.thank_you_note ?? `Thank you for shopping at ${brand}`,
+    qrLabel: tpl.qr_label ?? 'Scan to see this bill',
+    invoiceTitle: tpl.invoice_title ?? 'TAX INVOICE',
+    signatory: tpl.signatory_label ?? 'Authorized Signatory',
+    computerNote: tpl.computer_note ?? 'This is a computer-generated tax invoice.',
+    showLogo: tpl.show_logo ?? true,
+    showQr: tpl.show_qr ?? true,
+    showBarcode: tpl.show_barcode ?? true,
+  };
+}
+
+// Business identity comes from Settings -> Bill details (settings key
 // 'invoice'). Nothing is made up: a field that is not filled in stays blank.
 export function settingsFromShop(tpl: DbInvoiceTemplate, pos: DbPosSettings | null): CommerceSettings {
   return {
@@ -754,6 +771,7 @@ export function settingsFromShop(tpl: DbInvoiceTemplate, pos: DbPosSettings | nu
     logoUrl: tpl.logo_url || '',
     terms: tpl.terms || '',
     footer: tpl.footer_note || '',
+    bill: billTextFromShop(tpl),
     invoicePrefix: pos?.invoice_prefix || 'ORS',
     currency: pos?.currency || 'INR',
     taxRate: pos?.tax_rate || 0,

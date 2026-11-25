@@ -139,7 +139,7 @@ export const MonthlyBillsPage: React.FC = () => {
           <div className="font-bold">{loadError}</div>
           {missingState && (
             <Link to="/settings" className="underline font-bold">
-              {t('Open Shop details')}
+              {t('Open Bill details')}
             </Link>
           )}
         </div>

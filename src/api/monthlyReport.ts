@@ -83,7 +83,7 @@ function requireStoreState(tpl: DbInvoiceTemplate): string {
   const state = (tpl.state || '').trim();
   if (!state) {
     const err = new Error(
-      tr("The shop's State is missing. Fill it in Settings → Shop details, then try again.")
+      tr("The shop's State is missing. Fill it in Settings → Bill details, then try again.")
     );
     err.name = STORE_STATE_MISSING;
     throw err;
@@ -236,7 +236,7 @@ export function totalsFor(invoices: MonthlyInvoice[]): ChannelTotals {
   );
 }
 
-// Invoice identity straight from Settings -> Shop details. Blank fields stay
+// Invoice identity straight from Settings -> Bill details. Blank fields stay
 // blank - nothing is invented.
 export async function fetchInvoiceIdentity(): Promise<{
   brand: string;
