@@ -35,26 +35,32 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-os-page flex flex-col text-os-ink">
-      <header className="bg-os-paper border-t-4 border-t-os-accent border-b border-os-line h-16 px-4 sm:px-8 flex items-center justify-between gap-3">
-        <BrandLogo height={26} />
-        <div className="flex items-center gap-2">
+    // Two halves: the black Origin panel with the full logo, and the sign-in
+    // form on white. On a phone the black panel becomes a band on top.
+    <div className="min-h-screen bg-os-page text-os-ink grid lg:grid-cols-2">
+      <section className="bg-os-ink text-white flex flex-col justify-center lg:justify-between px-6 py-10 sm:px-10 lg:p-14">
+        <span className="hidden lg:block text-sm font-semibold text-white/55">{t('Shop billing')}</span>
+        <div className="flex justify-center lg:justify-start">
+          <BrandLogo kind="lockup" tone="white" height={140} className="lg:hidden" />
+          <BrandLogo kind="lockup" tone="white" height={260} className="hidden lg:block" />
+        </div>
+        <span className="hidden lg:block" />
+      </section>
+
+      <main className="flex flex-col px-5 py-6 sm:px-10 lg:p-14">
+        <div className="flex justify-end gap-2">
           <ThemeSwitch />
           <LanguageSwitch />
         </div>
-      </header>
 
-      <main className="flex-1 flex items-center justify-center p-4">
-        <div className="card w-full max-w-md p-6 sm:p-8">
-          <div className="flex justify-center pb-6 mb-6 border-b border-os-line">
-            <BrandLogo kind="lockup" height={110} />
-          </div>
-          <h1 className="font-display text-3xl sm:text-4xl">{t('Shop billing')}</h1>
-          <p className="text-base text-os-muted mt-2">{t('Sign in with your username and password.')}</p>
+        <div className="flex-1 flex items-center py-10">
+          <div className="w-full max-w-md">
+          <h1 className="page-title">{t('Shop billing')}</h1>
+          <p className="text-lg text-os-muted mt-3">{t('Sign in with your username and password.')}</p>
 
-          <form onSubmit={handleSubmit} className="space-y-5 mt-6">
+          <form onSubmit={handleSubmit} className="space-y-5 mt-8">
             {error && (
-              <div role="alert" className="text-base text-status-red border border-status-redBorder bg-status-redBg px-3 py-2.5">
+              <div role="alert" className="text-base text-status-red bg-status-redBg px-4 py-3">
                 {error}
               </div>
             )}
@@ -84,7 +90,7 @@ export const Login: React.FC = () => {
 
             <Button
               type="submit"
-              variant="primary"
+              variant="accent"
               size="lg"
               fullWidth
               disabled={loading}
@@ -94,9 +100,10 @@ export const Login: React.FC = () => {
               {loading ? t('Signing in…') : t('Sign in')}
             </Button>
           </form>
+          </div>
         </div>
+        <MadeBy />
       </main>
-      <MadeBy />
     </div>
   );
 };
