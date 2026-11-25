@@ -76,7 +76,6 @@ function round2(n: number): number {
 
 export const STORE_STATE_MISSING = 'STORE_STATE_MISSING';
 
-const sameState = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
 // The shop's state from the Invoice template. Without it the report cannot
 // tell CGST + SGST from IGST, so it refuses instead of guessing.
