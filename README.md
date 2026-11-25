@@ -1,5 +1,7 @@
 # Origin Billing
 
+Live: https://ors-billing.vercel.app
+
 Shop billing for **Origin — Street Culture, Visakhapatnam**. The same billing app as Vault 26, with Origin's own products, look and bill numbers. Origin has no online store yet, so it is shown as **coming soon** wherever sales are counted.
 
 **What it does**
@@ -9,23 +11,25 @@ Shop billing for **Origin — Street Culture, Visakhapatnam**. The same billing 
 - **All bills** – reprint or cancel a bill (stock goes back).
 - **Products & stock**, managed here:
   1. **Categories & sizes** – add a category (Shirts) and the sizes it comes in (S, M, L, XL), in order.
-  2. **Add product** – name, photo, category and price; tick the sizes this product comes in; type its colours; enter the pieces for each colour × size (Red / S = 10, Blue / S = 9). Each colour × size can have its own price.
+  2. **Add product** – name, photo (**take it with the camera** – laptop webcam or phone – or upload one), category and price; tick the sizes this product comes in; type its colours; enter the pieces for each colour × size (Red / S = 10, Blue / S = 9). Each colour × size can have its own price.
   3. Later: edit details, add colours or sizes, change one price, add or remove stock (with history), delete.
 - **Customers** – name and phone, their bills, optional GSTIN.
 - **Price tags** – hang tag, sticker or box label with barcode.
 - **Check sales** – shop sales, the cash count for the drawer, discounts per staff member, printable report.
 - **Monthly GST report** – one PDF with every shop bill of the month, CGST / SGST / IGST totals.
-- **Settings & staff** – shop details printed on bills, GST slab, printer, staff logins (username + password) and what each person can open. The owner can also change a saved bill.
+- **Settings & staff**
+  - **Bill details** – everything printed on a bill, with a live preview of the 80 mm bill and the A4 invoice: shop name and the line under it, address, phone, email, GSTIN, the thank-you line, bottom line, A4 terms, the words under the QR code, the A4 title, the signature line and note, whether the Origin logo, barcode and QR print, and the bill number series. A line left empty is not printed.
+  - GST slab, printer, staff logins (username + password) and what each person can open. The owner can also change a saved bill.
 - **Black & white / Red & white** theme switch and **English / తెలుగు** switch on every screen (printed bills stay black and white, in English).
 
 ## Bill numbers
 
-Shop bills: `ORS-YYMM-0001` (restarts every month). Numbers come from the database, so there are no gaps.
+Shop bills: `ORS-YYMM-0001` (restarts every month). The series (ORS) can be changed in Settings → Bill details; each series counts on its own. Numbers come from the database, so there are no gaps.
 
 ## Set up
 
-1. **Database** – Supabase SQL editor, every file in `db/migrations/` in order (`0001` … `0008`), then `db/first_owner.sql` with the owner's email and password filled in (not committed).
-2. **Shop details** – sign in as the owner → Settings & staff → Shop details. The address and phone are already filled in; add the **GSTIN** before giving GST bills.
+1. **Database** – Supabase SQL editor, every file in `db/migrations/` in order (`0001` … `0009`), then `db/first_owner.sql` with the owner's email and password filled in (not committed).
+2. **Bill details** – sign in as the owner → Settings & staff → Bill details. The address and phone are already filled in; add the **GSTIN** before giving GST bills.
 3. **App**
    ```bash
    cp .env.example .env   # VITE_SUPABASE_URL + VITE_SUPABASE_PUBLISHABLE_KEY (Supabase → Project Settings → API)
@@ -44,6 +48,12 @@ Shop bills: `ORS-YYMM-0001` (restarts every month). Numbers come from the databa
    - `VITE_SUPABASE_PUBLISHABLE_KEY`
    - optional `VITE_PUBLIC_APP_URL` – the address printed bills' QR codes open (e.g. a custom domain). Left out, the QR uses whatever address the app is running on when the bill is printed, so print from the deployed app, not from a local copy.
 3. **Deploy.** Only the two `VITE_` values go to Vercel – never the access token or database password from `.env`.
+
+## Sample data (for showing the app)
+
+`db/demo/seed_demo.sql` fills the app with sample data: 3 categories with their own sizes (T-Shirts S–XXL, Shirts 38–44, Jeans 28–36), 9 products with colours, stock and photos, 8 customers, two staff logins (**ravi / ravi1234** cashier, **sana / sana1234** manager) and a month of bills (one cancelled, one GST bill, one open return).
+
+**Before the shop goes live:** run `db/demo/remove_demo.sql` in the Supabase SQL editor, then delete the folder `demo` in Storage → `product-images`. Only sample rows are removed – anything real added since stays.
 
 ## Staff logins
 
