@@ -79,7 +79,7 @@ export const BillsPage: React.FC = () => {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-4">
         <div>
           <h1 className="page-title">{t('All bills')}</h1>
           <p className="text-base text-os-muted mt-1">
@@ -87,7 +87,7 @@ export const BillsPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap xl:flex-nowrap items-center gap-2 shrink-0">
           {canAudit && (
             <Button variant="secondary" onClick={() => navigate('/audit')} icon={<FileCheck size={18} />}>
               {t('Check sales')}

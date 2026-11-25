@@ -46,12 +46,12 @@ export const ProductsPage: React.FC = () => {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-4">
         <div>
           <h1 className="page-title">{t('Products & stock')}</h1>
           <p className="text-base text-os-muted mt-1">{t('Add categories and their sizes first, then products with their colours and stock.')}</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap xl:flex-nowrap items-center gap-2 shrink-0">
           {canTags && (
             <Button variant="secondary" icon={<Tag size={18} />} onClick={() => navigate('/tags')}>
               {t('Price tags')}
