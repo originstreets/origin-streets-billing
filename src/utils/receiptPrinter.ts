@@ -53,7 +53,7 @@ export interface PrintableReceiptData {
     amount: number;
   }>;
   changeAmount?: number;
-  // Business identity from the website's Invoice template; blank fields are
+  // Business identity from Settings -> Shop details; blank fields are
   // simply left off the print.
   storeSettings?: {
     storeName?: string;
