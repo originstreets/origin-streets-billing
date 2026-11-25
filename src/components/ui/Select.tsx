@@ -34,7 +34,7 @@ interface SelectProps {
 
 type Place = { left: number; width: number; maxHeight: number; top?: number; bottom?: number };
 
-// Origin dropdown: big rows, black and white, a tick on the chosen one.
+// Origin dropdown: a square field like the others, big rows, a tick on the chosen one.
 // The list is drawn in a portal so a scrolling box or a modal never cuts it off.
 export const Select: React.FC<SelectProps> = ({
   label,
@@ -197,19 +197,19 @@ export const Select: React.FC<SelectProps> = ({
         onKeyDown={onButtonKey}
         className={twMerge(
           clsx(
-            'w-full h-11 flex items-center justify-between gap-2 bg-os-paper text-os-ink text-base px-3.5 border border-os-line text-left transition-colors hover:border-os-ink focus:outline-none focus-visible:border-os-ink disabled:opacity-40 disabled:cursor-not-allowed',
+            'w-full h-12 flex items-center justify-between gap-2 bg-os-paper text-os-ink text-base px-3.5 border-2 border-os-line text-left transition-colors hover:border-os-ink focus:outline-none focus-visible:border-os-ink disabled:opacity-40 disabled:cursor-not-allowed',
             open && 'border-os-ink',
             error && 'border-status-red',
             buttonClassName
           )
         )}
       >
-        <span className={clsx('truncate', !selected && 'text-[#8A8A8A]')}>{selected ? selected.label : placeholder || t('Choose…')}</span>
+        <span className={clsx('truncate', !selected && 'text-[#8C8C8C]')}>{selected ? selected.label : placeholder || t('Choose…')}</span>
         <ChevronDown size={20} className={clsx('shrink-0 text-os-muted transition-transform', open && 'rotate-180')} />
       </button>
 
       {error ? (
-        <span className="text-sm text-status-red font-bold">{error}</span>
+        <span className="text-sm text-status-red font-semibold">{error}</span>
       ) : helperText ? (
         <span className="text-sm text-os-muted">{helperText}</span>
       ) : null}
@@ -219,7 +219,7 @@ export const Select: React.FC<SelectProps> = ({
         createPortal(
           <div
             style={{ position: 'fixed', left: place.left, width: place.width, top: place.top, bottom: place.bottom, maxHeight: place.maxHeight }}
-            className="z-[70] bg-os-paper border border-os-ink shadow-float flex flex-col"
+            className="z-[70] bg-os-paper border-2 border-os-ink shadow-float flex flex-col"
           >
             {showSearch && (
               <div className="p-2 border-b border-os-line relative">
@@ -271,7 +271,7 @@ export const Select: React.FC<SelectProps> = ({
                       onClick={() => choose(opt)}
                       className={clsx(
                         'min-h-[3rem] px-4 py-2.5 flex items-center justify-between gap-3 text-base cursor-pointer select-none',
-                        opt.disabled ? 'opacity-40 cursor-not-allowed' : i === active ? 'bg-os-soft' : '',
+                        opt.disabled ? 'opacity-40 cursor-not-allowed' : i === active ? 'bg-os-panel' : '',
                         isSel && 'font-bold'
                       )}
                     >

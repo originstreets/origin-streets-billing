@@ -16,7 +16,8 @@ interface TabsProps {
 
 export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange, className }) => {
   return (
-    <div role="tablist" className={clsx('border-b border-os-line flex items-center overflow-x-auto gap-1', className)}>
+    // A row of pills on a grey track; the open one is filled black.
+    <div role="tablist" className={clsx('flex items-center overflow-x-auto gap-1 p-1 rounded-full bg-os-paper w-fit max-w-full', className)}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         return (
@@ -26,17 +27,15 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onChange, className
             aria-selected={isActive}
             onClick={() => onChange(tab.id)}
             className={clsx(
-              'px-4 h-12 text-base transition-colors whitespace-nowrap flex items-center gap-2 border-b-[3px] -mb-[1px]',
-              isActive
-                ? 'border-os-accent text-os-ink font-bold'
-                : 'border-transparent text-os-muted hover:text-os-ink'
+              'px-4 h-10 rounded-full text-[0.9375rem] font-semibold transition-colors whitespace-nowrap flex items-center gap-2',
+              isActive ? 'bg-os-ink text-white' : 'text-os-muted hover:text-os-ink hover:bg-os-panel'
             )}
           >
             <span>{tab.label}</span>
             {tab.count !== undefined && (
               <span
                 className={clsx(
-                  'min-w-[1.75rem] px-1.5 py-0.5 text-sm text-center',
+                  'min-w-[1.75rem] px-1.5 py-0.5 rounded-full text-xs text-center',
                   isActive ? 'bg-os-accent text-white' : 'bg-os-soft text-os-muted'
                 )}
               >

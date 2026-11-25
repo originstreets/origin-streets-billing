@@ -11,17 +11,17 @@ export const ToastContainer: React.FC = () => {
   if (toasts.length === 0) return null;
 
   const icons = {
-    success: <CheckCircle size={20} className="text-status-green flex-shrink-0" />,
-    warning: <AlertTriangle size={20} className="text-status-amber flex-shrink-0" />,
-    error: <AlertCircle size={20} className="text-status-red flex-shrink-0" />,
-    info: <Info size={20} className="text-os-ink flex-shrink-0" />,
+    success: <CheckCircle size={20} className="text-[#4ADE80] flex-shrink-0" />,
+    warning: <AlertTriangle size={20} className="text-[#FBBF24] flex-shrink-0" />,
+    error: <AlertCircle size={20} className="text-[#F87171] flex-shrink-0" />,
+    info: <Info size={20} className="text-white flex-shrink-0" />,
   };
 
   const borders = {
-    success: 'border-l-status-green',
-    warning: 'border-l-status-amber',
-    error: 'border-l-status-red',
-    info: 'border-l-os-ink',
+    success: 'border-l-[#4ADE80]',
+    warning: 'border-l-[#FBBF24]',
+    error: 'border-l-[#F87171]',
+    info: 'border-l-white',
   };
 
   return (
@@ -34,18 +34,18 @@ export const ToastContainer: React.FC = () => {
           key={toast.id}
           role="status"
           className={clsx(
-            'p-4 bg-os-paper border border-os-line border-l-4 shadow-float flex items-start gap-3',
+            'p-4 bg-os-ink text-white border-l-4 shadow-float flex items-start gap-3',
             borders[toast.type || 'info']
           )}
         >
           <div className="mt-0.5">{icons[toast.type || 'info']}</div>
           <div className="flex-1 min-w-0">
-            <div className="text-base font-bold text-os-ink">{toast.title}</div>
-            {toast.message && <div className="text-sm text-os-muted mt-0.5 break-words">{toast.message}</div>}
+            <div className="text-base font-semibold text-white">{toast.title}</div>
+            {toast.message && <div className="text-sm text-white/70 mt-0.5 break-words">{toast.message}</div>}
           </div>
           <button
             onClick={() => store.removeToast(toast.id)}
-            className="text-os-muted hover:text-os-ink p-1"
+            className="text-white/60 hover:text-white p-1 rounded-full"
             aria-label={t('Close')}
           >
             <X size={18} />

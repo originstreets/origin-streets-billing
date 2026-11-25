@@ -15,7 +15,7 @@ interface MetricBlockProps {
   action?: React.ReactNode;
 }
 
-// One number with a plain label above it.
+// One number with a plain label above it; the number in the title face.
 export const MetricBlock: React.FC<MetricBlockProps> = ({ label, value, subValue, subtext, trend, className, action }) => {
   const displaySub = subtext || subValue;
   return (
@@ -26,14 +26,14 @@ export const MetricBlock: React.FC<MetricBlockProps> = ({ label, value, subValue
       </div>
 
       <div>
-        <div className="text-2xl sm:text-3xl font-black text-os-ink break-words">{value}</div>
+        <div className="font-display text-[2rem] sm:text-[2.5rem] leading-none text-os-ink break-words">{value}</div>
 
         {(displaySub || trend) && (
           <div className="mt-1.5 flex flex-wrap items-center gap-2 text-sm">
             {trend && (
               <span
                 className={clsx(
-                  'font-bold px-1.5 py-0.5 border',
+                  'font-semibold px-2 py-0.5 rounded-full border',
                   trend.isPositive
                     ? 'bg-status-greenBg text-status-green border-status-greenBorder'
                     : 'bg-status-redBg text-status-red border-status-redBorder'

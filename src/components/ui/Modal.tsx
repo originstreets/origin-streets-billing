@@ -47,34 +47,34 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, subtitle, 
       aria-label={title}
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto print:p-0 print:m-0 print:static print:block"
     >
-      <div className="fixed inset-0 bg-os-ink/60 transition-opacity no-print" onClick={onClose} />
+      <div className="fixed inset-0 bg-os-ink/70 transition-opacity no-print" onClick={onClose} />
 
       <div
         className={twMerge(
           clsx(
-            'relative w-full bg-os-paper border border-os-ink shadow-modal z-10 my-6 flex flex-col max-h-[92vh] print:border-none print:shadow-none print:m-0 print:p-0 print:max-h-none print:bg-transparent',
+            'relative w-full bg-os-paper shadow-modal z-10 my-6 flex flex-col max-h-[92vh] print:border-none print:shadow-none print:m-0 print:p-0 print:max-h-none print:bg-transparent',
             maxWidthStyles[maxWidth]
           )
         )}
       >
-        <div className="flex items-start justify-between gap-3 px-5 py-4 border-b border-os-line no-print">
+        <div className="flex items-start justify-between gap-3 px-6 pt-6 pb-4 no-print">
           <div className="min-w-0">
-            <h3 className="font-display text-xl sm:text-2xl text-os-ink break-words">{title}</h3>
-            {subtitle && <p className="text-sm text-os-muted mt-1">{subtitle}</p>}
+            <h3 className="font-display text-[1.75rem] sm:text-[2rem] leading-none text-os-ink break-words">{title}</h3>
+            {subtitle && <p className="text-sm text-os-muted mt-2">{subtitle}</p>}
           </div>
           <button
             onClick={onClose}
-            className="h-10 w-10 flex-shrink-0 flex items-center justify-center text-os-muted hover:text-os-ink hover:bg-os-soft"
+            className="h-10 w-10 flex-shrink-0 rounded-full flex items-center justify-center text-os-muted hover:text-white hover:bg-os-ink transition-colors"
             aria-label={t('Close')}
           >
             <X size={22} />
           </button>
         </div>
 
-        <div className="p-5 overflow-y-auto flex-1 print:p-0 print:overflow-visible">{children}</div>
+        <div className="px-6 pb-6 pt-1 overflow-y-auto flex-1 print:p-0 print:overflow-visible">{children}</div>
 
         {footer && (
-          <div className="px-5 py-4 border-t border-os-line bg-os-soft flex flex-wrap items-center justify-end gap-3 no-print">
+          <div className="px-6 py-4 bg-os-panel flex flex-wrap items-center justify-end gap-3 no-print">
             {footer}
           </div>
         )}

@@ -19,7 +19,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className, sho
     <span
       className={twMerge(
         clsx(
-          'inline-flex items-center gap-1.5 px-2.5 py-1 text-sm font-bold border whitespace-nowrap',
+          'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[0.8125rem] font-semibold border whitespace-nowrap',
           theme.bg,
           theme.text,
           theme.border,
