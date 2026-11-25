@@ -4,7 +4,8 @@ import { useStore, store } from '../../services/store';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
-import { Camera, Check, Plus, Save, Shirt, X } from 'lucide-react';
+import { Check, Plus, Save, Shirt, X } from 'lucide-react';
+import { PhotoPicker } from '../../components/common/PhotoPicker';
 import { useT } from '../../i18n';
 import { formatINR } from '../../utils/formatters';
 
@@ -169,33 +170,8 @@ export const ProductFormPage: React.FC = () => {
       {/* 1. Details */}
       <section className="card">
         {step(1, t('Name, photo and price'))}
-        <div className="p-5 grid grid-cols-1 sm:grid-cols-[10rem_1fr] gap-5">
-          <div>
-            <label className="block cursor-pointer">
-              <span className="label mb-1.5">{t('Photo')}</span>
-              <div className="aspect-[4/5] w-full bg-os-soft border border-os-line hover:border-os-ink flex items-center justify-center overflow-hidden">
-                {photoPreview ? (
-                  <img src={photoPreview} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="flex flex-col items-center gap-2 text-os-muted text-sm font-bold p-3 text-center">
-                    <Camera size={28} />
-                    {t('Add photo')}
-                  </span>
-                )}
-              </div>
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="sr-only"
-                onChange={(e) => choosePhoto(e.target.files?.[0] || null)}
-              />
-            </label>
-            {photo && (
-              <button type="button" onClick={() => choosePhoto(null)} className="mt-2 text-sm font-bold underline text-os-muted">
-                {t('Remove photo')}
-              </button>
-            )}
-          </div>
+        <div className="p-5 grid grid-cols-1 sm:grid-cols-[12rem_1fr] gap-6">
+          <PhotoPicker preview={photoPreview} onPick={choosePhoto} onRemove={photo ? () => choosePhoto(null) : undefined} />
           <div className="space-y-4">
             <Input label={`${t('Product name')} *`} value={name} onChange={(e) => setName(e.target.value)} maxLength={120} autoFocus />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
