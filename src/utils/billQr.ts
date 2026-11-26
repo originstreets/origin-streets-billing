@@ -36,6 +36,15 @@ function qrSvg(text: string, sizePx: number, level: 'L' | 'M'): string | null {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${dim} ${dim}" width="${sizePx}" height="${sizePx}" shape-rendering="crispEdges"><rect width="${dim}" height="${dim}" fill="#ffffff"/><path d="${path}" fill="#000000"/></svg>`;
 }
 
+// Any short text as a QR (the UPI pay link on the billing counter).
+export function textQrSvg(text: string, sizePx: number): string {
+  try {
+    return qrSvg(text, sizePx, 'M') || '';
+  } catch {
+    return '';
+  }
+}
+
 export function billLinkQrSvg(url: string, sizePx: number): string {
   try {
     return qrSvg(url, sizePx, 'M') || '';

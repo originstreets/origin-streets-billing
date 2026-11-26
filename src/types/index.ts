@@ -6,6 +6,8 @@ export interface PaymentSplit {
   amount: number;
   tendered?: number;
   change?: number;
+  // UPI only: the name of the shop QR it was paid to (Settings -> UPI).
+  upiAccount?: string;
 }
 
 export type PaymentStatus = 'PAID' | 'PENDING' | 'REFUNDED' | 'FAILED';

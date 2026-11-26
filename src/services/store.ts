@@ -27,6 +27,7 @@ interface PaymentSplitLike {
   amount: number;
   tendered?: number;
   change?: number;
+  upiAccount?: string;
 }
 
 // A category and its standard sizes (Shirts: S, M, L, XL), in order.
@@ -255,6 +256,7 @@ export const store = {
       amount: p.amount,
       tendered: p.tendered ?? null,
       changeAmount: p.change ?? null,
+      upiAccount: p.upiAccount ?? null,
     }));
 
     // orderData.discount is the total saving (item + bill); the database nets

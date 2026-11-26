@@ -26,3 +26,8 @@ export function paymentWord(order: Pick<Order, 'paymentMethod' | 'paymentSplits'
   if (order.paymentSplits && order.paymentSplits.length > 1) return 'Split payment';
   return methodWord(order.paymentMethod);
 }
+
+// "UPI · SBI current" when the shop QR it went to is known.
+export function splitWord(s: { method: string; upiAccount?: string }, t: (x: string) => string): string {
+  return s.upiAccount ? `${t(methodWord(s.method))} · ${s.upiAccount}` : t(methodWord(s.method));
+}

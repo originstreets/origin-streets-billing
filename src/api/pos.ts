@@ -453,6 +453,7 @@ export function mapBillToOrder(
     amount: Number(p.amount) || 0,
     tendered: p.tendered ?? undefined,
     change: p.change_amount ?? undefined,
+    upiAccount: p.upi_account ?? undefined,
   }));
   const cash = splits.find((p) => p.method === 'CASH');
   const orderItems: OrderItem[] = items
@@ -580,6 +581,7 @@ export interface CheckoutPaymentInput {
   amount: number;
   tendered: number | null;
   changeAmount: number | null;
+  upiAccount?: string | null;
 }
 
 export async function checkout(input: {
@@ -621,6 +623,7 @@ export async function checkout(input: {
       amount: p.amount,
       tendered: p.tendered,
       change_amount: p.changeAmount,
+      upi_account: p.method === 'UPI' ? p.upiAccount || null : null,
     })),
     p_notes: input.notes,
     p_customer_gstin: input.customerGstin ? normalizeGstin(input.customerGstin) : null,

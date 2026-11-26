@@ -10,7 +10,9 @@ import { isValidGstin, normalizeGstin } from '../../utils/gstin';
 import { singleItemVariant, variantLabel, ONE_SIZE } from '../../utils/singleItem';
 import { Product, ProductVariant, PaymentSplit, Order } from '../../types';
 import { printBill } from '../../utils/printBill';
-import { methodWord } from '../../utils/paymentWords';
+import { methodWord, splitWord } from '../../utils/paymentWords';
+import { UpiPayModal } from '../../components/billing/UpiPayModal';
+import { useUpiAccounts } from '../../api/upi';
 import { useT } from '../../i18n';
 import { ColourDot } from '../../components/common/ColourPicker';
 import {
@@ -110,6 +112,9 @@ export const PosBillingPage: React.FC = () => {
 
   // Payment (one method, or split across several)
   const [paymentSplits, setPaymentSplits] = useState<PaymentSplit[]>([{ id: 'split-1', method: 'CASH', amount: 0 }]);
+  // UPI: the QR pop-up; print = what Paid does after saving.
+  const [upiPrompt, setUpiPrompt] = useState<{ print: boolean } | null>(null);
+  const upiAccounts = useUpiAccounts();
   const [cashTendered, setCashTendered] = useState<string>('');
 
   // Saving & printing
@@ -370,6 +375,8 @@ export const PosBillingPage: React.FC = () => {
   const handleSetSinglePaymentMethod = (method: Method) => {
     setPaymentSplits([{ id: 'split-1', method, amount: grandTotal }]);
     if (method !== 'CASH') setCashTendered('');
+    // UPI: show the shop's QR codes straight away.
+    if (method === 'UPI' && cart.length > 0) setUpiPrompt({ print: true });
   };
 
   const resetBill = () => {
@@ -389,8 +396,19 @@ export const PosBillingPage: React.FC = () => {
 
   const canSettle = cart.length > 0 && remainingDue <= 0 && overPaid === 0 && !cashShort && !isProcessingPayment;
 
+  const upiAmount = paymentSplits.filter((s) => s.method === 'UPI').reduce((sum, s) => sum + (Number(s.amount) || 0), 0);
+
+  // A bill with any UPI part is saved from the QR pop-up (Paid), never directly.
+  const requestSave = (shouldPrint: boolean) => {
+    if (upiAmount > 0 && canSettle) {
+      setUpiPrompt({ print: shouldPrint });
+      return;
+    }
+    void handleCompletePayment(shouldPrint);
+  };
+
   // Save first, then print.
-  const handleCompletePayment = async (shouldPrint: boolean) => {
+  const handleCompletePayment = async (shouldPrint: boolean, upiAccount?: string | null) => {
     if (cart.length === 0) {
       store.addToast(t('The bill is empty'), t('Add at least one item.'), 'warning');
       return;
@@ -439,7 +457,11 @@ export const PosBillingPage: React.FC = () => {
 
     // Cash received / change go on the cash payment row.
     const splits = paymentSplits.map((s) =>
-      s.method === 'CASH' && numCashTendered > 0 ? { ...s, tendered: numCashTendered, change: changeToReturn } : s
+      s.method === 'CASH' && numCashTendered > 0
+        ? { ...s, tendered: numCashTendered, change: changeToReturn }
+        : s.method === 'UPI' && upiAccount
+          ? { ...s, upiAccount }
+          : s
     );
 
     try {
@@ -507,7 +529,7 @@ export const PosBillingPage: React.FC = () => {
         setSearch('');
       } else if (e.key === 'F2' || e.key === 'F4') {
         e.preventDefault();
-        if (canSettle && !receiptOrder) void handleCompletePayment(e.key === 'F2');
+        if (canSettle && !receiptOrder && !upiPrompt) requestSave(e.key === 'F2');
       }
     };
     window.addEventListener('keydown', onKeyDown);
@@ -1094,7 +1116,7 @@ export const PosBillingPage: React.FC = () => {
               <button
                 type="button"
                 disabled={!canSettle}
-                onClick={() => void handleCompletePayment(true)}
+                onClick={() => requestSave(true)}
                 className="w-full h-16 bg-os-accent text-white text-lg font-semibold hover:bg-os-accent-dark disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-3"
               >
                 {isProcessingPayment ? (
@@ -1112,7 +1134,7 @@ export const PosBillingPage: React.FC = () => {
               <button
                 type="button"
                 disabled={!canSettle}
-                onClick={() => void handleCompletePayment(false)}
+                onClick={() => requestSave(false)}
                 className="w-full h-12 ring-1 ring-inset ring-os-line hover:ring-os-accent text-base font-semibold disabled:opacity-30"
               >
                 {t('Save without printing')}
@@ -1122,6 +1144,23 @@ export const PosBillingPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {upiPrompt && (
+        <UpiPayModal
+          amount={upiAmount}
+          payeeName={settings.storeName}
+          accounts={upiAccounts}
+          print={upiPrompt.print}
+          busy={isProcessingPayment}
+          canManage={!!currentStaff?.permissions.includes('SETTINGS')}
+          onPaid={async (accountName) => {
+            await handleCompletePayment(upiPrompt.print, accountName);
+            setUpiPrompt(null);
+          }}
+          onNotPaid={() => setUpiPrompt(null)}
+          onManage={() => navigate('/settings?tab=UPI')}
+        />
+      )}
 
       {/* Colour & size picker */}
       {activeVariantProduct && (
@@ -1219,8 +1258,10 @@ export const PosBillingPage: React.FC = () => {
               <div className="text-base text-os-muted mt-1">
                 {receiptOrder.items.reduce((s, i) => s + i.quantity, 0)} {t('pieces')} ·{' '}
                 {receiptOrder.paymentSplits && receiptOrder.paymentSplits.length > 1
-                  ? receiptOrder.paymentSplits.map((s) => `${t(methodWord(s.method))} ${formatINR(s.amount)}`).join(' + ')
-                  : t(methodWord(receiptOrder.paymentMethod))}
+                  ? receiptOrder.paymentSplits.map((s) => `${splitWord(s, t)} ${formatINR(s.amount)}`).join(' + ')
+                  : receiptOrder.paymentSplits?.[0]
+                    ? splitWord(receiptOrder.paymentSplits[0], t)
+                    : t(methodWord(receiptOrder.paymentMethod))}
               </div>
               {!!receiptOrder.changeAmount && receiptOrder.changeAmount > 0 && (
                 <div className="text-xl font-black text-status-green mt-2">

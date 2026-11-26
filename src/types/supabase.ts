@@ -176,6 +176,7 @@ export interface DbPosPaymentTransaction {
   amount: number;
   tendered: number | null;
   change_amount: number | null;
+  upi_account: string | null;
   status: 'SUCCESS' | 'REFUNDED' | 'PENDING';
   created_at: string;
 }
