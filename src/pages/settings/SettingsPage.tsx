@@ -13,12 +13,13 @@ import { EditInvoicePanel } from './EditInvoicePanel';
 import { formatDateTime, toIstDateTime } from '../../utils/formatters';
 import { useT } from '../../i18n';
 import { BillDetailsPanel } from './BillDetailsPanel';
+import { UpiSettings } from './UpiSettings';
 import { shopPrintSettings } from '../../utils/printBill';
 import { loginEmail } from '../../api/auth';
 import { roleWord } from '../../utils/roleWord';
 import { StaffMember } from '../../types';
 
-type Tab = 'BILL' | 'TAX' | 'PRINTER' | 'CUSTOMERS' | 'STAFF' | 'EDIT_BILL';
+type Tab = 'BILL' | 'TAX' | 'UPI' | 'PRINTER' | 'CUSTOMERS' | 'STAFF' | 'EDIT_BILL';
 
 // A username is what staff type to sign in: letters, numbers, dot, dash, underscore.
 const USERNAME_RE = /^[a-z0-9._-]{3,30}$/;
@@ -27,7 +28,8 @@ export const SettingsPage: React.FC = () => {
   const { settings, staff, currentStaff } = useStore();
   const t = useT();
   const isOwner = currentStaff?.role === 'OWNER';
-  const [activeTab, setActiveTab] = useState<Tab>('BILL');
+  // ?tab=UPI opens that tab (the billing counter's 'Add them in Settings' link).
+  const [activeTab, setActiveTab] = useState<Tab>(() => (new URLSearchParams(window.location.search).get('tab') === 'UPI' ? 'UPI' : 'BILL'));
 
   const [taxThreshold, setTaxThreshold] = useState(String(settings.taxThreshold));
   const [taxRateLow, setTaxRateLow] = useState(String(settings.taxRateLow));
@@ -158,6 +160,7 @@ export const SettingsPage: React.FC = () => {
   const tabs = [
     { id: 'BILL', label: t('Bill details') },
     { id: 'TAX', label: t('GST') },
+    { id: 'UPI', label: t('UPI') },
     { id: 'PRINTER', label: t('Printer') },
     { id: 'CUSTOMERS', label: t('Customers') },
     { id: 'STAFF', label: t('Staff') },
@@ -256,6 +259,8 @@ export const SettingsPage: React.FC = () => {
               </div>
             </form>
           )}
+
+          {activeTab === 'UPI' && <UpiSettings />}
 
           {activeTab === 'CUSTOMERS' && <VipSettings />}
 
