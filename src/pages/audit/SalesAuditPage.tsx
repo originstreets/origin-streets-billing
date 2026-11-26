@@ -82,6 +82,12 @@ export const SalesAuditPage: React.FC = () => {
   const cashReceived = cashInDrawer + changeGiven;
   const cardTotal = sum(shopCounted, (o) => paidBy(o, 'CARD'));
   const upiTotal = sum(shopCounted, (o) => paidBy(o, 'UPI'));
+  // UPI money per shop QR it went to (bills saved before QRs were noted are left out).
+  const upiByQr = Array.from(
+    shopCounted
+      .flatMap((o) => (o.paymentSplits || []).filter((p) => p.method === 'UPI' && p.upiAccount))
+      .reduce((m, p) => m.set(p.upiAccount as string, (m.get(p.upiAccount as string) || 0) + p.amount), new Map<string, number>())
+  ).sort((a, b) => b[1] - a[1]);
   const otherTotal = sum(shopCounted, (o) => paidBy(o, 'OTHER'));
 
   const staffBreakdown = useMemo(() => {
@@ -238,6 +244,12 @@ export const SalesAuditPage: React.FC = () => {
               {line(t('Cash that should be in the drawer'), formatINR(cashInDrawer), true)}
               {line(t('Card'), formatINR(cardTotal))}
               {line(t('UPI'), formatINR(upiTotal))}
+              {upiByQr.map(([name, amount]) => (
+                <div key={name} className="flex justify-between gap-3 py-1.5 pl-4 text-sm">
+                  <span className="text-os-muted truncate">{name}</span>
+                  <span className="font-semibold whitespace-nowrap">{formatINR(amount)}</span>
+                </div>
+              ))}
               {otherTotal > 0 && line(t('Other'), formatINR(otherTotal))}
             </div>
           </div>
@@ -498,6 +510,9 @@ export const SalesAuditPage: React.FC = () => {
             <div className="font-bold">OTHER PAYMENTS</div>
             <div className="flex justify-between"><span>Card</span><span>{formatINR(cardTotal)}</span></div>
             <div className="flex justify-between"><span>UPI</span><span>{formatINR(upiTotal)}</span></div>
+            {upiByQr.map(([name, amount]) => (
+              <div key={name} className="flex justify-between pl-3"><span>{name}</span><span>{formatINR(amount)}</span></div>
+            ))}
 
           </div>
         </div>

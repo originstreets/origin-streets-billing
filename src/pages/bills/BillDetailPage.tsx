@@ -11,7 +11,7 @@ import { splitCgstSgst, formatRate } from '../../utils/tax';
 import { variantLabel } from '../../utils/singleItem';
 import { ArrowLeft, Printer, FileText, Ban } from 'lucide-react';
 import { useT } from '../../i18n';
-import { methodWord, paymentWord } from '../../utils/paymentWords';
+import { methodWord, paymentWord, splitWord } from '../../utils/paymentWords';
 import { printBill } from '../../utils/printBill';
 
 export const BillDetailPage: React.FC = () => {
@@ -178,10 +178,11 @@ export const BillDetailPage: React.FC = () => {
           <div className="card p-5 space-y-2">
             <div className="section-title">{t('Payment')}</div>
             <div className="text-lg font-bold">{t(paymentWord(bill))}</div>
-            {bill.paymentSplits && bill.paymentSplits.length > 1 &&
+            {bill.paymentSplits &&
+              (bill.paymentSplits.length > 1 || bill.paymentSplits.some((s) => s.upiAccount)) &&
               bill.paymentSplits.map((s, idx) => (
-                <div key={idx} className="flex justify-between text-base">
-                  <span className="text-os-muted">{t(methodWord(s.method))}</span>
+                <div key={idx} className="flex justify-between gap-3 text-base">
+                  <span className="text-os-muted">{splitWord(s, t)}</span>
                   <span className="font-bold">{formatINR(s.amount)}</span>
                 </div>
               ))}
