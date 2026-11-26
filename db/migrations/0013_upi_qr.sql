@@ -4,7 +4,7 @@
 
 create table public.pos_upi_accounts (
   id uuid primary key default gen_random_uuid(),
-  upi_id text not null check (upi_id ~ '^[A-Za-z0-9._-]{2,256}@[A-Za-z0-9.-]{2,64}$'),
+  upi_id text not null check (upi_id ~ '^[A-Za-z0-9._-]{2,100}@[A-Za-z0-9.-]{2,64}$'),
   -- Optional label shown to the cashier, e.g. "SBI current".
   name text not null default '' check (char_length(name) <= 60),
   description text check (description is null or char_length(description) <= 200),

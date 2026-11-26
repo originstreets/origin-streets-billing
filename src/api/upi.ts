@@ -12,7 +12,7 @@ export interface UpiAccount {
   sortOrder: number;
 }
 
-export const UPI_ID_RE = /^[A-Za-z0-9._-]{2,256}@[A-Za-z0-9.-]{2,64}$/;
+export const UPI_ID_RE = /^[A-Za-z0-9._-]{2,100}@[A-Za-z0-9.-]{2,64}$/;
 
 type Row = { id: string; upi_id: string; name: string; description: string | null; sort_order: number };
 
